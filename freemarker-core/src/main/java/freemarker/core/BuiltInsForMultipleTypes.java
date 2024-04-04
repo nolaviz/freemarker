@@ -46,6 +46,7 @@ import freemarker.template.TemplateNodeModel;
 import freemarker.template.TemplateNumberModel;
 import freemarker.template.TemplateScalarModel;
 import freemarker.template.TemplateSequenceModel;
+import freemarker.template.TemplateStringableModel;
 import freemarker.template.TemplateTransformModel;
 import freemarker.template._TemplateAPI;
 import freemarker.template._VersionInts;
@@ -730,7 +731,9 @@ class BuiltInsForMultipleTypes {
         @Override
         TemplateModel _eval(Environment env) throws TemplateException {
             TemplateModel model = target.eval(env);
-            if (model instanceof TemplateNumberModel) {
+            if (model instanceof TemplateStringableModel) {
+                return ((TemplateStringableModel) model).evalString();
+            } else if (model instanceof TemplateNumberModel) {
                 return new NumberFormatter((TemplateNumberModel) model, env);
             } else if (model instanceof TemplateDateModel) {
                 TemplateDateModel dm = (TemplateDateModel) model;

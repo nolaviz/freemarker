@@ -34,6 +34,7 @@ import freemarker.template.TemplateModelException;
 import freemarker.template.TemplateNumberModel;
 import freemarker.template.TemplateScalarModel;
 import freemarker.template.TemplateSequenceModel;
+import freemarker.template.TemplateStringableModel;
 import freemarker.template._VersionInts;
 
 /**
@@ -476,7 +477,9 @@ class EvalUtil {
             Environment env)
             throws TemplateModelException, InvalidReferenceException, TemplateException,
                     NonStringOrTemplateOutputException, NonStringException {
-        if (tm instanceof TemplateScalarModel) {
+        if (tm instanceof TemplateStringableModel) {
+            return modelToString(((TemplateStringableModel) tm).evalString(), exp, env);
+        } else if (tm instanceof TemplateScalarModel) {
             return modelToString((TemplateScalarModel) tm, exp, env);
         } else if (tm == null) {
             if (env.isClassicCompatible()) {
