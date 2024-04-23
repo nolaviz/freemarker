@@ -23,9 +23,9 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.util.Arrays;
@@ -34,7 +34,6 @@ import java.util.Random;
 import freemarker.debug.Debugger;
 import freemarker.log.Logger;
 import freemarker.template.utility.SecurityUtilities;
-import freemarker.template.utility.UndeclaredThrowableException;
 
 /**
  */
@@ -51,11 +50,8 @@ class DebuggerServer {
     
     public DebuggerServer(Serializable debuggerStub) {
         port = SecurityUtilities.getSystemProperty("freemarker.debug.port", Debugger.DEFAULT_PORT).intValue();
-        try {
-            password = SecurityUtilities.getSystemProperty("freemarker.debug.password", "").getBytes("UTF-8");
-        } catch (UnsupportedEncodingException e) {
-            throw new UndeclaredThrowableException(e);
-        }
+        password = SecurityUtilities.getSystemProperty("freemarker.debug.password", "")
+                .getBytes(StandardCharsets.UTF_8);
         this.debuggerStub = debuggerStub;
     }
     

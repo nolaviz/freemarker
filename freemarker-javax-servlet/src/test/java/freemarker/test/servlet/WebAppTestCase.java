@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -128,7 +129,7 @@ public class WebAppTestCase {
             final String content;
             if (responseCode == 200) {
                 try (InputStream in = httpCon.getInputStream()) {
-                    content = IOUtils.toString(in, "UTF-8");
+                    content = IOUtils.toString(in, StandardCharsets.UTF_8);
                 }
             } else {
                 content = null;
@@ -187,7 +188,8 @@ public class WebAppTestCase {
             ClassPathResource cpResource = findWebAppDirectoryResource(webAppName);
             try (InputStream in = cpResource.resolverClass.getResourceAsStream(
                     cpResource.path + EXPECTED_DIR + expectedFileName)) {
-                expected = TestUtil.removeTxtCopyrightComment(normalizeWS(IOUtils.toString(in, "utf-8"), compressWS));
+                expected = TestUtil.removeTxtCopyrightComment(normalizeWS(IOUtils.toString(in, StandardCharsets.UTF_8),
+                        compressWS));
             }
         }
         assertEquals(maskIgnored(expected, ignoredParts), maskIgnored(actual, ignoredParts));

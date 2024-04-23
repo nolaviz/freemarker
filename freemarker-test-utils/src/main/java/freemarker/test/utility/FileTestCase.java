@@ -32,6 +32,7 @@ import java.io.Writer;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -108,7 +109,7 @@ public abstract class FileTestCase extends TestCase {
     }
 
     private void saveString(File actualFile, String actualContents) throws IOException {
-        try (Writer w = new OutputStreamWriter(new FileOutputStream(actualFile), "UTF-8")) {
+        try (Writer w = new OutputStreamWriter(new FileOutputStream(actualFile), StandardCharsets.UTF_8)) {
             w.write(actualContents);
         }
     }
