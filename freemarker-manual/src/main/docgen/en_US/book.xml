@@ -30114,7 +30114,7 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
       <section xml:id="versions_2_3_33">
         <title>2.3.33</title>
 
-        <para>Release date: 2024-05-08 + release process</para>
+        <para>Release date: 2024-06-01</para>
 
         <para>Please note that with this version the minimum required Java
         version was increased from Java 7 to Java 8. Also for the few who rely
