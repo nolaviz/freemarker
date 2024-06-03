@@ -24,7 +24,7 @@ plugins {
 dependencies {
     implementation(gradleApi())
 
-    implementation("org.apache.freemarker.docgen:freemarker-docgen-core:0.0.2-SNAPSHOT")
+    implementation("org.apache.freemarker.docgen:freemarker-docgen-core:0.0.3-SNAPSHOT")
     implementation("org.nosphere.apache:creadur-rat-gradle:0.8.1")
     // Xalan dependencies are required by rat even though it does not declare a dependency on them.
     implementation("xalan:xalan:2.7.3")
