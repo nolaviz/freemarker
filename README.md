@@ -112,7 +112,7 @@ That's because different parts of the source code target different Java versions
 and Gradle requires the exact JDK version (not higher) for each.
 
 Be sure that your default Java version (which Gradle should use automatically) is at
-least 16!
+least 17!
 
 If you are building from the official source *release* (not from source that you
 got from Git), `gradle/wrapper/gradle-wrapper.jar` is missing from that, and you
