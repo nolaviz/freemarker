@@ -20,14 +20,14 @@
 import java.io.FileOutputStream
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
-import java.util.*
+import java.util.Properties
 import java.util.stream.Collectors
 
 plugins {
     `freemarker-root`
     `maven-publish`
     signing
-    id("biz.aQute.bnd.builder") version "6.1.0"
+    id("biz.aQute.bnd.builder") version "7.0.0"
     id("eclipse")
 }
 

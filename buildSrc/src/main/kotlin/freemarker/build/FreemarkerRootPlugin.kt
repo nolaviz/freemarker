@@ -28,7 +28,12 @@ import org.gradle.api.publish.maven.tasks.AbstractPublishToMaven
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.jvm.toolchain.JavaLanguageVersion
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.attributes
+import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.filter
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.the
+import org.gradle.kotlin.dsl.withType
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 
@@ -66,6 +71,9 @@ open class FreemarkerRootPlugin : Plugin<Project> {
 
                 named<Jar>(mainSourceSet.sourcesJarTaskName) {
                     from(resourceTemplatesDir)
+                    manifest.attributes(
+                        "Multi-Release" to "true"
+                    )
                 }
 
                 withType<org.nosphere.apache.rat.RatTask>() {

@@ -19,6 +19,7 @@
 
 package freemarker.build
 
+import java.util.concurrent.atomic.AtomicBoolean
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
@@ -35,11 +36,14 @@ import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainService
-import org.gradle.kotlin.dsl.*
+import org.gradle.kotlin.dsl.dependencies
+import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.register
+import org.gradle.kotlin.dsl.setProperty
+import org.gradle.kotlin.dsl.the
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.testing.base.TestingExtension
-import java.util.concurrent.atomic.AtomicBoolean
 
 private const val TEST_UTILS_SOURCE_SET_NAME = "test-utils"
 
@@ -332,7 +336,8 @@ class FreemarkerRootExtension constructor(
 
         allConfiguredSourceSetNamesRef.add(sourceSetName)
 
-        FreemarkerModuleDef(context, this, generated, sourceSetName, JavaLanguageVersion.of(sourceSetVersion)).apply {
+        val parsedSourceSetVersion = JavaLanguageVersion.of(sourceSetVersion)
+        FreemarkerModuleDef(context, this, generated, sourceSetName, parsedSourceSetVersion).apply {
             sourceSet.apply {
                 if (generated) {
                     java.setSrcDirs(emptyList<String>())
@@ -350,7 +355,13 @@ class FreemarkerRootExtension constructor(
 
                     tasks.apply {
                         named<Jar>(mainSourceSet.sourcesJarTaskName) { from(sourceSet.allSource) }
-                        named<Jar>(JavaPlugin.JAR_TASK_NAME) { from(sourceSet.output) }
+                        named<Jar>(JavaPlugin.JAR_TASK_NAME) {
+                            from(sourceSet.output) {
+                                if (parsedSourceSetVersion.compareTo(JavaLanguageVersion.of(javaVersion)) > 0) {
+                                    into("META-INF/versions/${parsedSourceSetVersion.asInt()}")
+                                }
+                            }
+                        }
                         named<Javadoc>(JavaPlugin.JAVADOC_TASK_NAME) { source(sourceSet.java) }
                     }
 
