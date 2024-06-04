@@ -20,13 +20,16 @@
 <book conformance="docgen" version="5.0" xml:lang="en"
       xmlns="http://docbook.org/ns/docbook"
       xmlns:xlink="http://www.w3.org/1999/xlink"
->
+      xmlns:ns5="http://www.w3.org/1999/xhtml"
+      xmlns:ns4="http://www.w3.org/1998/Math/MathML"
+      xmlns:ns3="http://www.w3.org/2000/svg"
+      xmlns:ns="http://docbook.org/ns/docbook">
   <info>
     <title>Apache FreeMarker Manual</title>
 
     <titleabbrev>Manual</titleabbrev>
 
-    <productname>Freemarker 2.3.33</productname>
+    <productname>Freemarker 2.3.34</productname>
   </info>
 
   <preface role="index.html" xml:id="preface">
@@ -21414,8 +21417,8 @@ Primary content continued</programlisting>
           instead.</para>
 
           <para>This directive only has effect on the section that is
-          literally (as in the text editor) inside the nested block, not on the
-          parts that are called/included from there.</para>
+          literally (as in the text editor) inside the nested block, not on
+          the parts that are called/included from there.</para>
 
           <para>Example:</para>
 
@@ -24133,8 +24136,8 @@ or
           instead.</para>
 
           <para>This directive only has effect on the section that is
-          literally (as in the text editor) inside the nested block, not on the
-          parts that are called/included from there.</para>
+          literally (as in the text editor) inside the nested block, not on
+          the parts that are called/included from there.</para>
 
           <para>Example:</para>
 
@@ -24326,8 +24329,8 @@ ${"&amp;"}</programlisting>
           block, the earlier output format is restored.</para>
 
           <para>This directive only has effect on the section that is
-          literally (as in the text editor) inside the nested block, not on the
-          parts that are called/included from there.</para>
+          literally (as in the text editor) inside the nested block, not on
+          the parts that are called/included from there.</para>
 
           <para>Example:</para>
 
@@ -30110,6 +30113,31 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
 
     <appendix xml:id="app_versions">
       <title>Version history</title>
+
+      <section xml:id="versions_2_3_34">
+        <title>2.3.34</title>
+
+        <para>Release date: TODO</para>
+
+        <section>
+          <title>Changes on the Java side</title>
+
+          <itemizedlist>
+            <listitem>
+              <para>Using multi-release JAR format (JEP 238) to put Java 9 and
+              Java 16 support files
+              (<literal>freemarker.core._Java9Impl</literal> and
+              <literal>_Java16Impl</literal>) into
+              <literal>freemarker.jar</literal>. This means that they are now
+              under <literal>META-INF/versions/9</literal> and
+              <literal>16</literal>, instead of in the usual location together
+              with Java 8 byte code class files. This was needed as some
+              tools, like Maven Enforcer plugin, have seen them as problems
+              otherwise.</para>
+            </listitem>
+          </itemizedlist>
+        </section>
+      </section>
 
       <section xml:id="versions_2_3_33">
         <title>2.3.33</title>
