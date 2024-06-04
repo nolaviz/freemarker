@@ -16,28 +16,19 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package freemarker.core;
 
-import java.lang.reflect.Method;
-import java.util.Set;
+import static org.junit.Assert.*;
 
-/**
- * Used internally only, might change without notice!
- * Used for accessing functionality that's only present in Java 16 or later.
- */
-public interface _Java16 {
-    /**
-     * Using "JEP 238: Multi-Release JAR Files", links to the proper version of the {@link _Java16Impl} class.
-     */
-    _Java16 INSTANCE = new _Java16Impl();
+import org.junit.Test;
 
-    /**
-     * Tells if Java 16 features can be used in the current run-time environment.
-     */
-    boolean isSupported();
-
-    boolean isRecord(Class<?> cl);
-
-    Set<Method> getComponentAccessors(Class<?> recordClass);
-
+public class Java9TestClassLoadingCorrectTest {
+    @Test
+    public void java9Supported() {
+        // This can be a problem if the test is not ran from the jar, and the impl class from the core takes precedence
+        assertTrue(
+                "Multi-Release JAR selection of the proper " + _Java9Impl.class.getName() + " variant didn't happen in the Java 9 test environment",
+                _Java9.INSTANCE.isSupported());
+    }
 }

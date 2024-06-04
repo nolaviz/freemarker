@@ -16,6 +16,7 @@
  * specific language governing permissions and limitations
  * under the License.
  */
+
 package freemarker.core;
 
 import java.lang.reflect.Method;
@@ -23,21 +24,27 @@ import java.util.Set;
 
 /**
  * Used internally only, might change without notice!
- * Used for accessing functionality that's only present in Java 16 or later.
+ * Pre-Java-16 implementation of {@link _Java16}.
  */
-public interface _Java16 {
-    /**
-     * Using "JEP 238: Multi-Release JAR Files", links to the proper version of the {@link _Java16Impl} class.
-     */
-    _Java16 INSTANCE = new _Java16Impl();
+// We also have a Java 16 versions of this class in freemarker-core16, and we put all versions into
+// the jar artifact via "JEP 238: Multi-Release JAR Files".
+public final class _Java16Impl implements _Java16 {
+    @Override
+    public boolean isSupported() {
+        return false;
+    }
 
-    /**
-     * Tells if Java 16 features can be used in the current run-time environment.
-     */
-    boolean isSupported();
+    @Override
+    public boolean isRecord(Class<?> cl) {
+        throw newNoRecordSupportException();
+    }
 
-    boolean isRecord(Class<?> cl);
+    @Override
+    public Set<Method> getComponentAccessors(Class<?> recordClass){
+        throw newNoRecordSupportException();
+    }
 
-    Set<Method> getComponentAccessors(Class<?> recordClass);
-
+    private UnsupportedOperationException newNoRecordSupportException() {
+        return new UnsupportedOperationException("Record support needs at least Java 16");
+    }
 }

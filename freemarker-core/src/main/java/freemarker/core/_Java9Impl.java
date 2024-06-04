@@ -16,28 +16,23 @@
  * specific language governing permissions and limitations
  * under the License.
  */
-package freemarker.core;
 
-import java.lang.reflect.Method;
-import java.util.Set;
+package freemarker.core;
 
 /**
  * Used internally only, might change without notice!
- * Used for accessing functionality that's only present in Java 16 or later.
+ * Pre-Java-9 implementation of {@link _Java9}.
  */
-public interface _Java16 {
-    /**
-     * Using "JEP 238: Multi-Release JAR Files", links to the proper version of the {@link _Java16Impl} class.
-     */
-    _Java16 INSTANCE = new _Java16Impl();
+// We also have a Java 9 versions of this class in freemarker-core9, and we put all versions into
+// the jar artifact via "JEP 238: Multi-Release JAR Files".
+public class _Java9Impl implements _Java9 {
+    @Override
+    public boolean isSupported() {
+        return false;
+    }
 
-    /**
-     * Tells if Java 16 features can be used in the current run-time environment.
-     */
-    boolean isSupported();
-
-    boolean isRecord(Class<?> cl);
-
-    Set<Method> getComponentAccessors(Class<?> recordClass);
-
+    @Override
+    public boolean isAccessibleAccordingToModuleExports(Class<?> m) {
+        throw new UnsupportedOperationException("Requires at least Java 9");
+    }
 }

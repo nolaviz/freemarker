@@ -33,6 +33,7 @@ import org.junit.Test;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
+import freemarker.core._Java16;
 import freemarker.template.TemplateHashModel;
 import freemarker.template.TemplateMethodModelEx;
 
@@ -42,6 +43,8 @@ import freemarker.template.TemplateMethodModelEx;
 public class NotExportedInternalPackageTest {
     @Test
     public void java16InternalClassAvoidanceTest() throws Exception {
+        assertTrue(_Java16.INSTANCE.isSupported());
+
         BeansWrapper bw = new BeansWrapper();
 
         Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder()

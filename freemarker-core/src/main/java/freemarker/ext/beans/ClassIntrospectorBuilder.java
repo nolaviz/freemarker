@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import freemarker.core._JavaVersions;
+import freemarker.core._Java16;
 import freemarker.template.Configuration;
 import freemarker.template.Version;
 import freemarker.template._TemplateAPI;
@@ -76,9 +76,10 @@ final class ClassIntrospectorBuilder implements Cloneable {
         this.incompatibleImprovements = normalizeIncompatibleImprovementsVersion(incompatibleImprovements);
         treatDefaultMethodsAsBeanMembers = incompatibleImprovements.intValue() >= _VersionInts.V_2_3_26;
         defaultZeroArgumentNonVoidMethodPolicy = ZeroArgumentNonVoidMethodPolicy.METHOD_ONLY;
-        recordZeroArgumentNonVoidMethodPolicy = incompatibleImprovements.intValue() >= _VersionInts.V_2_3_33 && _JavaVersions.JAVA_16 != null
-                ? ZeroArgumentNonVoidMethodPolicy.BOTH_METHOD_AND_PROPERTY_UNLESS_BEAN_PROPERTY_READ_METHOD
-                : defaultZeroArgumentNonVoidMethodPolicy;
+        recordZeroArgumentNonVoidMethodPolicy
+                = incompatibleImprovements.intValue() >= _VersionInts.V_2_3_33 && _Java16.INSTANCE.isSupported()
+                        ? ZeroArgumentNonVoidMethodPolicy.BOTH_METHOD_AND_PROPERTY_UNLESS_BEAN_PROPERTY_READ_METHOD
+                        : defaultZeroArgumentNonVoidMethodPolicy;
         memberAccessPolicy = DefaultMemberAccessPolicy.getInstance(this.incompatibleImprovements);
     }
 

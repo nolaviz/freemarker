@@ -38,11 +38,11 @@ public class Java9ImplTest {
 
     @Test
     public void testIsAccessibleAccordingToModuleExports() throws Exception {
-        assertNotNull(_JavaVersions.JAVA_9);
-        assertTrue(_JavaVersions.JAVA_9.isAccessibleAccordingToModuleExports(Document.class));
-        assertFalse(_JavaVersions.JAVA_9.isAccessibleAccordingToModuleExports(getSomeInternalClass()));
-        assertTrue(_JavaVersions.JAVA_9.isAccessibleAccordingToModuleExports(String[].class));
-        assertTrue(_JavaVersions.JAVA_9.isAccessibleAccordingToModuleExports(int.class));
+        assertTrue(_Java9.INSTANCE.isSupported());
+        assertTrue(_Java9.INSTANCE.isAccessibleAccordingToModuleExports(Document.class));
+        assertFalse(_Java9.INSTANCE.isAccessibleAccordingToModuleExports(getSomeInternalClass()));
+        assertTrue(_Java9.INSTANCE.isAccessibleAccordingToModuleExports(String[].class));
+        assertTrue(_Java9.INSTANCE.isAccessibleAccordingToModuleExports(int.class));
     }
 
     private static Class<?> getSomeInternalClass() throws SAXException, IOException, ParserConfigurationException,

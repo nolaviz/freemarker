@@ -23,6 +23,15 @@ package freemarker.core;
  * Used for accessing functionality that's only present in Java 9 or later.
  */
 public interface _Java9 {
+    /**
+     * Using "JEP 238: Multi-Release JAR Files", links to the proper version of the {@link _Java9Impl} class.
+     */
+    _Java9 INSTANCE = new _Java9Impl();
+
+    /**
+     * Tells if Java 9 features can be used in the current run-time environment.
+     */
+    boolean isSupported();
 
     boolean isAccessibleAccordingToModuleExports(Class<?> m);
 
