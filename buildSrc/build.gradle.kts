@@ -26,7 +26,4 @@ dependencies {
 
     implementation("org.apache.freemarker.docgen:freemarker-docgen-core:0.0.3-SNAPSHOT")
     implementation("org.nosphere.apache:creadur-rat-gradle:0.8.1")
-    // Xalan dependencies are required by rat even though it does not declare a dependency on them.
-    implementation("xalan:xalan:2.7.3")
-    implementation("xalan:serializer:2.7.3")
 }
