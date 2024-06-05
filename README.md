@@ -161,7 +161,7 @@ Originally done on IntelliJ IDEA Community 2023.3.2:
 - "File" -> "Open": Select the "settings.gradle.kts" within the freemarker root directory.
 - If the project fails to load (or build), then adjust the following configuration
   in "File" -> "Settings" -> "Build, Execution, Deployment" -> "Build Tools" -> "Gradle":
-  - Gradle JVM: JDK 16 (or higher)
+  - Gradle JVM: JDK 17 (or higher)
   - Build and run using: "Gradle"
   - Run tests using: "Gradle"
 
@@ -201,7 +201,7 @@ Gradle project. After that, it's recommended to set these preferences (based on 
     Number of imports required for .*: 99
     Number of static imports needed for .*: 1
   - Java -> Installed JRE-s:
-    Ensure that you have JDK 16 installed, and that it was added to Eclipse.
+    Ensure that you have JDK 17 installed, and that it was added to Eclipse.
     Note that it's not JRE, but JDK.
   - Java -> Compiler -> Javadoc:
     "Malformed Javadoc comments": Error
