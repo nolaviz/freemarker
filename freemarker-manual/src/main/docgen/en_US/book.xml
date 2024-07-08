@@ -20,10 +20,7 @@
 <book conformance="docgen" version="5.0" xml:lang="en"
       xmlns="http://docbook.org/ns/docbook"
       xmlns:xlink="http://www.w3.org/1999/xlink"
-      xmlns:ns5="http://www.w3.org/1999/xhtml"
-      xmlns:ns4="http://www.w3.org/1998/Math/MathML"
-      xmlns:ns3="http://www.w3.org/2000/svg"
-      xmlns:ns="http://docbook.org/ns/docbook">
+>
   <info>
     <title>Apache FreeMarker Manual</title>
 
@@ -30118,6 +30115,25 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
         <title>2.3.34</title>
 
         <para>Release date: TODO</para>
+
+        <section>
+          <title>Changes on the FTL side</title>
+
+          <itemizedlist>
+            <listitem>
+              <para><link
+              xlink:href="https://issues.apache.org/jira/browse/FREEMARKER-227">FREEMARKER-227</link>:
+              Fixed bug, where if <literal>classic_compatible</literal> mode
+              was <literal>true</literal> (rarely used), then sequence
+              built-ins, like
+              <literal><replaceable>seq</replaceable>?seq_contains(<replaceable>value</replaceable>)</literal>,
+              has failed with <literal>NullPointerException</literal> if
+              values of incompatible types had to be compared. The intended
+              behavior is to convert the values to string, and then compare
+              them (to mimic the behavior of FreeMarker 1.x).</para>
+            </listitem>
+          </itemizedlist>
+        </section>
 
         <section>
           <title>Changes on the Java side</title>

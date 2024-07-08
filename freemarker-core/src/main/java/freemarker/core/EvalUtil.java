@@ -293,9 +293,13 @@ class EvalUtil {
             boolean rightBool = ((TemplateBooleanModel) rightValue).getAsBoolean();
             cmpResult = (leftBool ? 1 : 0) - (rightBool ? 1 : 0);
         } else if (env.isClassicCompatible()) {
-            String leftSting = leftExp.evalAndCoerceToPlainText(env);
-            String rightString = rightExp.evalAndCoerceToPlainText(env);
-            cmpResult = env.getCollator().compare(leftSting, rightString);
+            String leftString = leftExp != null
+                    ? leftExp.evalAndCoerceToPlainText(env)
+                    : EvalUtil.coerceModelToPlainText(leftValue, null, null, env);
+            String rightString = rightExp != null
+                    ? rightExp.evalAndCoerceToPlainText(env)
+                    : EvalUtil.coerceModelToPlainText(rightValue, null, null, env);;
+            cmpResult = env.getCollator().compare(leftString, rightString);
         } else {
             if (typeMismatchMeansNotEqual) {
                 if (operator == CMP_OP_EQUALS) {
@@ -446,7 +450,7 @@ class EvalUtil {
      * 
      * @param seqTip
      *            Tip to display if the value type is not coercable, but it's sequence or collection.
-     * @param exp {@code null} is allowed, but may results in less helpful error messages
+     * @param exp {@code null} is allowed, but may result in less helpful error messages
      *
      * @return Never {@code null}
      */
