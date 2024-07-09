@@ -455,7 +455,7 @@ public class Configurable {
 
         cFormat = _TemplateAPI.getDefaultCFormat(incompatibleImprovements);
 
-        classicCompatible = Integer.valueOf(0);
+        classicCompatible = 0;
         properties.setProperty(CLASSIC_COMPATIBLE_KEY, classicCompatible.toString());
         
         templateExceptionHandler = _TemplateAPI.getDefaultTemplateExceptionHandler(incompatibleImprovements);
@@ -485,8 +485,7 @@ public class Configurable {
         apiBuiltinEnabled = Boolean.FALSE;
         properties.setProperty(API_BUILTIN_ENABLED_KEY, apiBuiltinEnabled.toString());
         
-        logTemplateExceptions = Boolean.valueOf(
-                _TemplateAPI.getDefaultLogTemplateExceptions(incompatibleImprovements));
+        logTemplateExceptions = _TemplateAPI.getDefaultLogTemplateExceptions(incompatibleImprovements);
         properties.setProperty(LOG_TEMPLATE_EXCEPTIONS_KEY, logTemplateExceptions.toString());
         
         // outputEncoding and urlEscapingCharset defaults to null,
@@ -494,7 +493,7 @@ public class Configurable {
 
         setBooleanFormat(BOOLEAN_FORMAT_LEGACY_DEFAULT);
         
-        customAttributes = new HashMap();
+        customAttributes = new HashMap<>();
         
         customDateFormats = Collections.emptyMap();
         customNumberFormats = Collections.emptyMap();
@@ -564,96 +563,117 @@ public class Configurable {
     void setParent(Configurable parent) {
         this.parent = parent;
     }
-    
-    /**
-     * Toggles the "Classic Compatible" mode. For a comprehensive description
-     * of this mode, see {@link #isClassicCompatible()}.
-     */
-    public void setClassicCompatible(boolean classicCompatibility) {
-        this.classicCompatible = Integer.valueOf(classicCompatibility ? 1 : 0);
-        properties.setProperty(CLASSIC_COMPATIBLE_KEY, classicCompatibilityIntToString(classicCompatible));
-    }
 
     /**
-     * Same as {@link #setClassicCompatible(boolean)}, but allows some extra values. 
-     * 
-     * @param classicCompatibility {@code 0} means {@code false}, {@code 1} means {@code true},
-     *     {@code 2} means {@code true} but with emulating bugs in early 2.x classic-compatibility mode. Currently
-     *     {@code 2} affects how booleans are converted to string; with {@code 1} it's always {@code "true"}/{@code ""},
-     *     but with {@code 2} it's {@code "true"}/{@code "false"} for values wrapped by {@link BeansWrapper} as then
-     *     {@link Boolean#toString()} prevails. Note that {@code someBoolean?string} will always consistently format the
-     *     boolean according the {@code boolean_format} setting, just like in FreeMarker 2.3 and later.
-     */
-    public void setClassicCompatibleAsInt(int classicCompatibility) {
-        if (classicCompatibility < 0 || classicCompatibility > 2) {
-            throw new IllegalArgumentException("Unsupported \"classicCompatibility\": " + classicCompatibility);
-        }
-        this.classicCompatible = Integer.valueOf(classicCompatibility);
-    }
-    
-    private String classicCompatibilityIntToString(Integer i) {
-        if (i == null) return null;
-        else if (i.intValue() == 0) return MiscUtil.C_FALSE;
-        else if (i.intValue() == 1) return MiscUtil.C_TRUE;
-        else return i.toString();
-    }
-    
-    /**
-     * Returns whether the engine runs in the "Classic Compatibile" mode.
-     * When this mode is active, the engine behavior is altered in following
-     * way: (these resemble the behavior of the 1.7.x line of FreeMarker engine,
-     * now named "FreeMarker Classic", hence the name).
+     * Sets if the template engine runs in the "classic compatible" mode; Do NOT use this mode, unless you need it for
+     * backward compatibility with FreeMarker 1 era (now called FreeMarker Classic) templates!
+     * To be more compatible with 1.7.x templates, we emulate behavior that's otherwise undesirable/confusing. Hiding
+     * wrong variable names is the most obvious disadvantage, but some actually want that. But there are other
+     * undesirable effects too. Because for 1.7.x every simple value was a string, the comparison rules are quite
+     * problematic (see below). Also note that relative template paths doesn't work as expected, as 1.7.x treated all
+     * template paths absolute.
+     *
+     * In case you just want to limit the effect of errors in templates, consider using
+     * {@link #setTemplateExceptionHandler(TemplateExceptionHandler)} instead.
+     *
+     * <p>The list of behavioral changes in "classic compatible" mode are these:
      * <ul>
-     * <li>handle undefined expressions gracefully. Namely when an expression
-     *   "expr" evaluates to null:
+     * <li>Handle undefined expressions gracefully. When expression "expr" evaluates to {@code null}:
      *   <ul>
      *     <li>
-     *       in <code>&lt;assign varname=expr&gt;</code> directive, 
+     *       in <code>&lt;assign varName = expr&gt;</code> directive,
      *       or in <code>${expr}</code> directive,
-     *       or in {@code otherexpr == expr},
-     *       or in {@code otherexpr != expr}, 
+     *       or in {@code otherExpr == expr},
+     *       or in {@code otherExpr != expr},
      *       or in {@code hash[expr]},
      *       or in {@code expr[keyOrIndex]} (since 2.3.20),
      *       or in {@code expr.key} (since 2.3.20),
      *       then it's treated as empty string.
      *     </li>
-     *     <li>as argument of <code>&lt;list expr as item&gt;</code> or 
+     *     <li>as argument of <code>&lt;list expr as item&gt;</code> or
      *       <code>&lt;foreach item in expr&gt;</code>, the loop body is not executed
      *       (as if it were a 0-length list)
      *     </li>
      *     <li>as argument of <code>&lt;if&gt;</code> directive, or on other places where a
-     *       boolean expression is expected, it's treated as false
+     *       boolean expression is expected, it's treated as {@code false}
      *     </li>
      *   </ul>
      * </li>
      * <li>Non-boolean models are accepted in <code>&lt;if&gt;</code> directive,
      *   or as operands of logical operators. "Empty" models (zero-length string,
-     * empty sequence or hash) are evaluated as false, all others are evaluated as
-     * true.</li>
-     * <li>When boolean value is treated as a string (i.e. output in 
-     *   <code>${...}</code> directive, or concatenated with other string), true 
-     * values are converted to string "true", false values are converted to 
-     * empty string. Except, if the value of the setting is {@code 2}, it will be
-     * formatted according the {@code boolean_format} setting, just like in
-     * 2.3.20 and later.
-     * </li>
-     * <li>Scalar models supplied to <code>&lt;list&gt;</code> and 
+     *   empty sequence or hash) are treated as {@code false}, all others are treated as
+     *   {@code true}.</li>
+     * <li>When boolean value is treated as a string (i.e. output in
+     *   <code>${...}</code> directive, or concatenated with other string), {@code true}
+     *   values are converted to string {@code "true"}, {@code false} values are converted to
+     *   empty string. Except, {@link #setClassicCompatibleAsInt(int)} can set slightly different behavior; see
+     *   there.</li>
+     * <li>Scalar models supplied to <code>&lt;list&gt;</code> and
      *   <code>&lt;foreach&gt;</code> are treated as a one-element list consisting
      *   of the passed model.
      * </li>
+     * <li>When comparing values of incompatible types, we convert all of them to strings, and then compare them.
+     *   This is a quite fragile mode of operation, as how numbers, dates, etc. are converted to string depends on
+     *   various settings, like {@code number_format}, {@code date_format}, {@code locale} etc. So for example, usually,
+     *   {@code 1000} (the number) is equals to {@code "1000"} (the string), but if the {@code number_format} or
+     *   {@code locale} requires thousands grouping, then suddenly they aren't equal, as then {@code 1000} is converted
+     *   to something like {@code "1,000"}. Also note that {@code false} (the boolean) is not equal to {@code "false"},
+     *   if {@code false} is converted to the empty string, which is usually the case (see above).
+     * </li>
      * <li>Paths parameter of <code>&lt;include&gt;</code> will be interpreted as
-     * absolute path.
+     *   absolute path.
      * </li>
      * </ul>
-     * In all other aspects, the engine is a 2.1 engine even in compatibility
+     *
+     * <p>In all other aspects, the engine is a 2.1 engine even in compatibility
      * mode - you don't lose any of the new functionality by enabling it.
+     *
+     * @see #setClassicCompatibleAsInt(int)
      */
-    public boolean isClassicCompatible() {
-        return classicCompatible != null ? classicCompatible.intValue() != 0 : parent.isClassicCompatible();
+    public void setClassicCompatible(boolean classicCompatible) {
+        setClassicCompatibleAsInt(this.classicCompatible = classicCompatible ? 1 : 0);
     }
 
+    /**
+     * Same as {@link #setClassicCompatible(boolean)}, but allows some extra values. 
+     * 
+     * @param classicCompatible {@code 0} means {@code false}, {@code 1} means {@code true},
+     *     {@code 2} means {@code true} but with emulating bugs in early 2.x classic-compatibility mode. Currently
+     *     {@code 2} affects how booleans are converted to string <em>implicitly</em> (as in <code>${aBoolean}</code>).
+     *     (Explicit conversions like <code>${aBoolean?string}</code>, and <code>${aBoolean?c}</code> always format as
+     *     in non-classic mode regardless of this number.)
+     *     With {@code 1} it's always {@code "true"}/{@code ""}.
+     *     With {@code 2} it's {@code "true"}/{@code "false"} for values wrapped by {@link BeansWrapper}, as then
+     *     {@link Boolean#toString()} prevails.
+     *     With {@code 3} implicit boolean conversion works like in non-classic-compatible mode.
+     */
+    public void setClassicCompatibleAsInt(int classicCompatible) {
+        if (classicCompatible < 0 || classicCompatible > 2) {
+            throw new IllegalArgumentException("\"classicCompatible\" int value out of range: " + classicCompatible);
+        }
+        this.classicCompatible = classicCompatible;
+        properties.setProperty(CLASSIC_COMPATIBLE_KEY, classicCompatibilityIntToString(this.classicCompatible));
+    }
+    
+    private String classicCompatibilityIntToString(Integer i) {
+        if (i == null) return null;
+        else if (i == 0) return MiscUtil.C_FALSE;
+        else if (i == 1) return MiscUtil.C_TRUE;
+        else return i.toString();
+    }
+
+    /**
+     * Getter pair of {@link #setClassicCompatible(boolean)}.
+     */
+    public boolean isClassicCompatible() {
+        return classicCompatible != null ? classicCompatible != 0 : parent.isClassicCompatible();
+    }
+
+    /**
+     * Getter pair of {@link #setClassicCompatibleAsInt(int)}
+     */
     public int getClassicCompatibleAsInt() {
-        return classicCompatible != null ? classicCompatible.intValue() : parent.getClassicCompatibleAsInt();
+        return classicCompatible != null ? classicCompatible : parent.getClassicCompatibleAsInt();
     }
     
     /**
@@ -1020,17 +1040,18 @@ public class Configurable {
      * The string value for the boolean {@code true} and {@code false} values, usually intended for human consumption
      * (not for a computer language), separated with comma. For example, {@code "yes,no"}. Note that white-space is
      * significant, so {@code "yes, no"} is WRONG (unless you want that leading space before "no"). Because the proper
-     * way of formatting booleans depends on the context too much, it's probably the best to leave this setting on its
+     * way of formatting booleans depends on the context too much, it's probably best to leave this setting on its
      * default, which will enforce explicit formatting, like <code>${aBoolean?string('on', 'off')}</code>.
      * 
-     * <p>For backward compatibility the default is {@code "true,false"}, but using that value is denied for automatic
+     * <p>For backward compatibility, the default is {@code "true,false"}, but using that value is denied for automatic
      * boolean-to-string conversion, like <code>${myBoolean}</code> will fail with it. If you generate the piece of
      * output for "computer audience" as opposed to "human audience", then you should write
      * <code>${myBoolean?c}</code>, which will print {@code true} or {@code false}. If you really want to always
-     * format for computer audience, then it's might be reasonable to set this setting to {@code c}.
+     * format for computer audience, then it's might be reasonable to set this setting to {@code "c"} (which is like
+     * {@code "true,false"}, but works for automatic conversion).
      * 
-     * <p>Note that automatic boolean-to-string conversion only exists since FreeMarker 2.3.20. Earlier this setting
-     * only influenced the result of {@code myBool?string}. 
+     * <p>Note that implicit boolean-to-string conversion only exists since FreeMarker 2.3.20. Earlier this setting
+     * only influenced the result of {@code myBool?string} (explicit boolean-to-string conversion).
      */
     public void setBooleanFormat(String booleanFormat) {
         validateBooleanFormat(booleanFormat);
@@ -2681,7 +2702,7 @@ public class Configurable {
             } else if (CLASSIC_COMPATIBLE_KEY_SNAKE_CASE.equals(name)
                     || CLASSIC_COMPATIBLE_KEY_CAMEL_CASE.equals(name)) {
                 char firstChar;
-                if (value != null && value.length() > 0) {
+                if (value != null && !value.isEmpty()) {
                     firstChar =  value.charAt(0);
                 } else {
                     firstChar = 0;
@@ -2689,7 +2710,7 @@ public class Configurable {
                 if (Character.isDigit(firstChar) || firstChar == '+' || firstChar == '-') {
                     setClassicCompatibleAsInt(Integer.parseInt(value));
                 } else {
-                    setClassicCompatible(value != null ? StringUtil.getYesNo(value) : false);
+                    setClassicCompatible(value != null && StringUtil.getYesNo(value));
                 }
             } else if (TEMPLATE_EXCEPTION_HANDLER_KEY_SNAKE_CASE.equals(name)
                     || TEMPLATE_EXCEPTION_HANDLER_KEY_CAMEL_CASE.equals(name)) {

@@ -507,7 +507,7 @@ class EvalUtil {
                     return booleanValue ? MiscUtil.C_TRUE : "";
                 } else if (compatMode == 2) {
                     if (tm instanceof BeanModel) {
-                        // In 2.1, bean-wrapped booleans where strings, so that has overridden the boolean behavior: 
+                        // In 2.1, bean-wrapped booleans were strings, so that has overridden the boolean behavior:
                         return _BeansAPI.getAsClassicCompatibleString((BeanModel) tm);
                     } else {
                         return booleanValue ? MiscUtil.C_TRUE : "";
