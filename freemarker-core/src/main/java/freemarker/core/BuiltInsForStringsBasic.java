@@ -229,6 +229,42 @@ class BuiltInsForStringsBasic {
         }
     }
     
+    static class is_blankBI extends BuiltInForString {
+        
+        private class BIMethod implements TemplateMethodModelEx {
+            private String s;
+    
+            private BIMethod(String s) {
+                this.s = s;
+            }
+    
+            @Override
+            public Object exec(List args) throws TemplateModelException {
+            	
+            	final int strLen = s == null ? 0 : s.length();
+
+                if (strLen == 0 ) {
+                    return TemplateBooleanModel.TRUE;
+                }
+
+                for (int i = 0; i < strLen; i++) {
+
+                    if (!Character.isWhitespace(s.charAt(i)) ) {
+                        return TemplateBooleanModel.FALSE;
+                    }
+                }
+                return TemplateBooleanModel.TRUE;
+                
+            }
+        }
+    
+        @Override
+        TemplateModel calculateResult(String s, Environment env) throws TemplateException {
+            return new BIMethod(s);
+        }
+    }
+
+    
     static class keep_afterBI extends BuiltInForString {
         class KeepAfterMethod implements TemplateMethodModelEx {
             private String s;

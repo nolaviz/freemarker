@@ -85,7 +85,7 @@ abstract class BuiltIn extends Expression implements Cloneable {
 
     static final Set<String> CAMEL_CASE_NAMES = new TreeSet<>();
     static final Set<String> SNAKE_CASE_NAMES = new TreeSet<>();
-    static final int NUMBER_OF_BIS = 296;
+    static final int NUMBER_OF_BIS = 297;
     static final HashMap<String, BuiltIn> BUILT_INS_BY_NAME = new HashMap<>(NUMBER_OF_BIS * 3 / 2 + 1, 1f);
 
     static final String BI_NAME_SNAKE_CASE_WITH_ARGS = "with_args";
@@ -140,6 +140,7 @@ abstract class BuiltIn extends Expression implements Cloneable {
         putBI("index_of", "indexOf", new BuiltInsForStringsBasic.index_ofBI(false));
         putBI("int", new intBI());
         putBI("interpret", new Interpret());
+        putBI("is_blank", "isBlank", new BuiltInsForStringsBasic.is_blankBI());
         putBI("is_boolean", "isBoolean", new BuiltInsForMultipleTypes.is_booleanBI());
         putBI("is_collection", "isCollection", new BuiltInsForMultipleTypes.is_collectionBI());
         putBI("is_collection_ex", "isCollectionEx", new BuiltInsForMultipleTypes.is_collection_exBI());
