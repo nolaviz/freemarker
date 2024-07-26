@@ -228,18 +228,15 @@ class BuiltInsForStringsBasic {
                     "For sequences/collections (lists and such) use \"?seq_index_of\" instead."));
         }
     }
-    
-    static class is_blankBI extends BuiltInForString {
-        
-        private class BIMethod implements TemplateMethodModelEx {
-            private String s;
-    
-            private BIMethod(String s) {
-                this.s = s;
-            }
-    
-            @Override
-            public Object exec(List args) throws TemplateModelException {
+
+    static class is_blankBI extends BuiltIn {
+        @Override
+        TemplateModel _eval(Environment env) throws TemplateException {
+            TemplateModel tm = target.eval(env);
+            target.assertNonNull(tm, env);
+            if(tm instanceof TemplateScalarModel) {
+            	
+            	String s = ((TemplateScalarModel) tm).getAsString();
             	
             	final int strLen = s == null ? 0 : s.length();
 
@@ -255,14 +252,14 @@ class BuiltInsForStringsBasic {
                 }
                 return TemplateBooleanModel.TRUE;
                 
+            	
             }
-        }
-    
-        @Override
-        TemplateModel calculateResult(String s, Environment env) throws TemplateException {
-            return new BIMethod(s);
+            
+            throw new NonStringException(env);
         }
     }
+    
+    
 
     
     static class keep_afterBI extends BuiltInForString {
