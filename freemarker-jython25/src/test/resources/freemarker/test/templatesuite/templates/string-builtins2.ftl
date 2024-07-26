@@ -134,3 +134,14 @@ ${s?contains("")} = true
 [${""?right_pad(5, r"/\_")}]
 [${""?right_pad(6, r"/\_")}]
 [${""?right_pad(7, r"/\_")}]
+--
+<#assign s = "">
+${s?is_blank} = true
+<#assign s = "    ">
+${s?is_blank} = true
+<#assign s = "    a">
+${s?is_blank} = false
+<#assign s = "a">
+${s?is_blank} = false
+<#assign s = "a ">
+${s?is_blank} = false
