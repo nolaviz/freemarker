@@ -21,12 +21,10 @@ package freemarker.core;
 
 import java.io.IOException;
 
-import org.junit.Before;
 import org.junit.Test;
 
 import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
-import freemarker.template.TemplateModelException;
 import freemarker.test.TemplateTest;
 
 public class StringBuiltInTest extends TemplateTest {
@@ -41,12 +39,14 @@ public class StringBuiltInTest extends TemplateTest {
 
 
     @Test
-    public void testTruncate() throws IOException, TemplateException {
-        assertOutput("${\"\"?is_blank?c}", "true");
-        assertOutput("${\"    \"?is_blank?c}", "true");
-        assertOutput("${\"    a\"?is_blank?c}", "false");
-        assertOutput("${\"a\"?is_blank?c}", "false");
-        assertOutput("${\"a \"?is_blank?c}", "false");
+    public void testBlankToNull() throws IOException, TemplateException {
+    	assertOutput("${nonExisting?blank_to_null!\"-\"}", "-");
+    	assertOutput("${nonExisting!?blank_to_null!\"-\"}", "-");
+        assertOutput("${\"\"?blank_to_null!\"-\"}", "-");
+        assertOutput("${\"    \"?blank_to_null!\"-\"}", "-");
+        assertOutput("${\"    a\"?blank_to_null!\"-\"}", "    a");
+        assertOutput("${\"a\"?blank_to_null!\"-\"}", "a");
+        assertOutput("${\"a \"?blank_to_null!\"-\"}", "a ");
     }
    
 }

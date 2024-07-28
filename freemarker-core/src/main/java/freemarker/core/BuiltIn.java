@@ -100,6 +100,7 @@ abstract class BuiltIn extends Expression implements Cloneable {
         putBI("absolute_template_name", "absoluteTemplateName", new BuiltInsForStringsMisc.absolute_template_nameBI());
         putBI("ancestors", new ancestorsBI());
         putBI("api", new BuiltInsForMultipleTypes.apiBI());
+        putBI("blank_to_null", "blankToNull", new BuiltInsForExistenceHandling.blank_to_nullBI());
         putBI("boolean", new BuiltInsForStringsMisc.booleanBI());
         putBI("byte", new byteBI());
         putBI("c", new BuiltInsForMultipleTypes.cBI());
@@ -140,7 +141,6 @@ abstract class BuiltIn extends Expression implements Cloneable {
         putBI("index_of", "indexOf", new BuiltInsForStringsBasic.index_ofBI(false));
         putBI("int", new intBI());
         putBI("interpret", new Interpret());
-        putBI("is_blank", "isBlank", new BuiltInsForStringsBasic.is_blankBI());
         putBI("is_boolean", "isBoolean", new BuiltInsForMultipleTypes.is_booleanBI());
         putBI("is_collection", "isCollection", new BuiltInsForMultipleTypes.is_collectionBI());
         putBI("is_collection_ex", "isCollectionEx", new BuiltInsForMultipleTypes.is_collection_exBI());

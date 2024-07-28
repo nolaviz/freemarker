@@ -121,6 +121,41 @@ class BuiltInsForExistenceHandling {
             return _eval(env) == TemplateBooleanModel.TRUE;
         }
     }
+    
+    
+	static class blank_to_nullBI extends BuiltInsForExistenceHandling.ExistenceBuiltIn {
+		@Override
+		TemplateModel _eval(Environment env) throws TemplateException {
+
+			TemplateModel model = evalMaybeNonexistentTarget(env);
+
+			if (model == null) {
+				return null;
+			}
+
+			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, this, null, env);
+			return isBlank(s) ? null : model;
+
+		}
+
+		private boolean isBlank(String s) {
+
+			int len = s == null ? 0 : s.length();
+
+			if (len == 0) {
+				return true;
+			}
+
+			for (int i = 0; i < len; i++) {
+
+				if (!Character.isWhitespace(s.charAt(i))) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+	}
 
     static class if_existsBI extends BuiltInsForExistenceHandling.ExistenceBuiltIn {
         @Override

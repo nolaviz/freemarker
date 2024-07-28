@@ -229,39 +229,6 @@ class BuiltInsForStringsBasic {
         }
     }
 
-    static class is_blankBI extends BuiltIn {
-        @Override
-        TemplateModel _eval(Environment env) throws TemplateException {
-            TemplateModel tm = target.eval(env);
-            target.assertNonNull(tm, env);
-            if(tm instanceof TemplateScalarModel) {
-            	
-            	String s = ((TemplateScalarModel) tm).getAsString();
-            	
-            	final int strLen = s == null ? 0 : s.length();
-
-                if (strLen == 0 ) {
-                    return TemplateBooleanModel.TRUE;
-                }
-
-                for (int i = 0; i < strLen; i++) {
-
-                    if (!Character.isWhitespace(s.charAt(i)) ) {
-                        return TemplateBooleanModel.FALSE;
-                    }
-                }
-                return TemplateBooleanModel.TRUE;
-                
-            	
-            }
-            
-            throw new NonStringException(env);
-        }
-    }
-    
-    
-
-    
     static class keep_afterBI extends BuiltInForString {
         class KeepAfterMethod implements TemplateMethodModelEx {
             private String s;
