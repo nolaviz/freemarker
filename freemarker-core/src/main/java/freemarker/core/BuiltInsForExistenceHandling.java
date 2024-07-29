@@ -21,6 +21,7 @@ package freemarker.core;
 
 import java.util.List;
 
+import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
@@ -135,10 +136,9 @@ class BuiltInsForExistenceHandling {
 
 			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, this, null, env);
 			return isBlank(s) ? null : model;
-
 		}
 
-		private boolean isBlank(String s) {
+		private static boolean isBlank(String s) {
 
 			int len = s == null ? 0 : s.length();
 
@@ -154,7 +154,37 @@ class BuiltInsForExistenceHandling {
 			}
 			return true;
 		}
+	}
 
+	static class trim_to_nullBI extends BuiltInsForExistenceHandling.ExistenceBuiltIn {
+		@Override
+		TemplateModel _eval(Environment env) throws TemplateException {
+
+			TemplateModel model = evalMaybeNonexistentTarget(env);
+
+			if (model == null) {
+				return null;
+			}
+
+			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, this, null, env);
+			String trimmed = s.trim();
+			return trimmed.length() == 0 ? null : new SimpleScalar(trimmed);
+		}
+	}
+
+	static class empty_to_nullBI extends BuiltInsForExistenceHandling.ExistenceBuiltIn {
+		@Override
+		TemplateModel _eval(Environment env) throws TemplateException {
+
+			TemplateModel model = evalMaybeNonexistentTarget(env);
+
+			if (model == null) {
+				return null;
+			}
+
+			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, this, null, env);
+			return s.length() == 0 ? null : model;
+		}
 	}
 
     static class if_existsBI extends BuiltInsForExistenceHandling.ExistenceBuiltIn {
@@ -165,5 +195,7 @@ class BuiltInsForExistenceHandling {
             return model == null ? TemplateModel.NOTHING : model;
         }
     }
+
     
+   
 }

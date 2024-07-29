@@ -48,5 +48,28 @@ public class StringBuiltInTest extends TemplateTest {
         assertOutput("${\"a\"?blank_to_null!\"-\"}", "a");
         assertOutput("${\"a \"?blank_to_null!\"-\"}", "a ");
     }
+    
+    
+    @Test
+    public void testTrimToNull() throws IOException, TemplateException {
+    	assertOutput("${nonExisting?trim_to_null!\"-\"}", "-");
+    	assertOutput("${nonExisting!?trim_to_null!\"-\"}", "-");
+        assertOutput("${\"\"?trim_to_null!\"-\"}", "-");
+        assertOutput("${\"    \"?trim_to_null!\"-\"}", "-");
+        assertOutput("${\"    a\"?trim_to_null!\"-\"}", "a");
+        assertOutput("${\"a\"?trim_to_null!\"-\"}", "a");
+        assertOutput("${\"a \"?trim_to_null!\"-\"}", "a");
+    }
+    
+    @Test
+    public void emptyToNull() throws IOException, TemplateException {
+    	assertOutput("${nonExisting?empty_to_null!\"-\"}", "-");
+    	assertOutput("${nonExisting!?empty_to_null!\"-\"}", "-");
+        assertOutput("${\"\"?empty_to_null!\"-\"}", "-");
+        assertOutput("${\"    \"?empty_to_null!\"-\"}", "    ");
+        assertOutput("${\"    a\"?empty_to_null!\"-\"}", "    a");
+        assertOutput("${\"a\"?empty_to_null!\"-\"}", "a");
+        assertOutput("${\"a \"?empty_to_null!\"-\"}", "a ");
+    }
    
 }
