@@ -25,6 +25,8 @@ import org.junit.Test;
 
 import freemarker.core._Java16;
 import freemarker.core._Java16Impl;
+import freemarker.core._Java9;
+import freemarker.core._Java9Impl;
 
 public class Java16TestClassLoadingCorrectTest {
     @Test
@@ -33,5 +35,8 @@ public class Java16TestClassLoadingCorrectTest {
         assertTrue(
                 "Multi-Release JAR selection of the proper " + _Java16Impl.class.getName() + " variant didn't happen in the Java 16 test environment",
                 _Java16.INSTANCE.isSupported());
+        assertTrue(
+                "Multi-Release JAR selection of the proper " + _Java9Impl.class.getName() + " variant didn't happen in the Java 16 test environment",
+                _Java9.INSTANCE.isSupported());
     }
 }
