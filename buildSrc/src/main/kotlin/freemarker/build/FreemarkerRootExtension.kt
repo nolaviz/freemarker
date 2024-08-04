@@ -230,8 +230,6 @@ class FreemarkerModuleDef internal constructor(
                     .toString()
                 systemProperty("freemarker.test.resourcesDir", resourcesDestDir)
 
-                testClassesDirs = sources.output.classesDirs
-
                 // We have to build the jar and depend on that, because we depend on "JEP 238: Multi-Release JAR Files",
                 // which puts some classes into the jar under META-INF\versions\$javaVersion.
                 val jarClasspath = project.objects.fileCollection()

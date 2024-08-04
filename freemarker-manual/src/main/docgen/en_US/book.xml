@@ -30149,7 +30149,14 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
               <literal>16</literal>, instead of in the usual location together
               with Java 8 byte code class files. This was needed as some
               tools, like Maven Enforcer plugin, have seen them as problems
-              otherwise.</para>
+              otherwise. Also, now we don't look for the
+              <literal>_Java<replaceable>X</replaceable>Impl</literal> classes
+              with <literal>Class.forName(String)</literal>, instead we just
+              refer them normally, as now Java will link to the proper variant
+              according the multi-release JAR format. This can help if some
+              environment doesn't support class loading on runtime (however,
+              then you still will have problems with other optional
+              features).</para>
             </listitem>
           </itemizedlist>
         </section>
