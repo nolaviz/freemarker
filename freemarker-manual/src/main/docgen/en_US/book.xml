@@ -13453,6 +13453,40 @@ grant codeBase "file:/path/to/freemarker.jar"
           built-in.</para>
         </section>
 
+        <section xml:id="ref_blank_to_null">
+          <title>blank_to_null</title>
+
+          <indexterm>
+            <primary>blank_to_null built-in</primary>
+          </indexterm>
+
+          <para>Returns null if the string is null, empty or contains only whitespaces. 
+          Otherwise it returns the string as is. (un-trimmed). Also can be applied to <literal>null</literal>/missing values like the <link
+          linkend="ref_builtin_has_content">has_content</link> built-in.
+          Example:</para>
+
+          <programlisting role="template">${nonExisting?blank_to_null!"-"}
+${nonExisting!?blank_to_null!"-"}
+${""?blank_to_null!"-"}
+${"    "?blank_to_null!"-"}
+${"    a"?blank_to_null!"-"}
+${"a"?blank_to_null!"-"}
+${"a "?blank_to_null!"-"}
+</programlisting>
+
+          <para>The output:</para>
+
+          <programlisting role="output">-
+-
+-
+-
+    a
+a
+a 
+</programlisting>
+          
+        </section>
+
         <section xml:id="ref_builtin_cap_first">
           <title>cap_first</title>
 
