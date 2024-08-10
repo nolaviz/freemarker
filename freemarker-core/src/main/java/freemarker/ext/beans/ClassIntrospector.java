@@ -48,7 +48,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import freemarker.core.BugException;
-import freemarker.core._JavaVersions;
+import freemarker.core._Java16;
+import freemarker.core._Java9;
 import freemarker.ext.beans.BeansWrapper.MethodAppearanceDecision;
 import freemarker.ext.beans.BeansWrapper.MethodAppearanceDecisionInput;
 import freemarker.ext.util.ModelCache;
@@ -200,7 +201,7 @@ class ClassIntrospector {
         this.defaultZeroArgumentNonVoidMethodPolicy = builder.getDefaultZeroArgumentNonVoidMethodPolicy();
         this.recordZeroArgumentNonVoidMethodPolicy = builder.getRecordZeroArgumentNonVoidMethodPolicy();
         this.recordAware = defaultZeroArgumentNonVoidMethodPolicy != recordZeroArgumentNonVoidMethodPolicy;
-        if (recordAware && _JavaVersions.JAVA_16 == null) {
+        if (recordAware && !_Java16.INSTANCE.isSupported()) {
             throw new IllegalArgumentException(
                     "defaultZeroArgumentNonVoidMethodPolicy != recordZeroArgumentNonVoidMethodPolicy, " +
                     "but record support is not available (as Java 16 support is not available).");
@@ -343,7 +344,7 @@ class ClassIntrospector {
             ClassMemberAccessPolicy effClassMemberAccessPolicy) throws IntrospectionException {
         BeanInfo beanInfo = Introspector.getBeanInfo(clazz);
 
-        boolean treatClassAsRecord = recordAware && _JavaVersions.JAVA_16.isRecord(clazz);
+        boolean treatClassAsRecord = recordAware && _Java16.INSTANCE.isRecord(clazz);
         ZeroArgumentNonVoidMethodPolicy zeroArgumentNonVoidMethodPolicy = treatClassAsRecord
                 ? recordZeroArgumentNonVoidMethodPolicy
                 : defaultZeroArgumentNonVoidMethodPolicy;
@@ -835,7 +836,7 @@ class ClassIntrospector {
     private static void discoverAccessibleMethods(
             Class<?> clazz, Map<ExecutableMemberSignature, List<Method>> accessibles) {
         if (Modifier.isPublic(clazz.getModifiers())
-                && (_JavaVersions.JAVA_9 == null || _JavaVersions.JAVA_9.isAccessibleAccordingToModuleExports(clazz))) {
+                && (!_Java9.INSTANCE.isSupported() || _Java9.INSTANCE.isAccessibleAccordingToModuleExports(clazz))) {
             try {
                 Method[] methods = clazz.getMethods();
                 for (int i = 0; i < methods.length; i++) {

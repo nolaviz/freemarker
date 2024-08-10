@@ -22,18 +22,17 @@ import freemarker.ext.beans.BeansWrapper;
 
 /**
  * Used internally only, might change without notice!
- * Used for accessing functionality that's only present in Java 9 or later.
+ * Java 9 implementation of {@link _Java9}.
  */
-// Compile this against Java 9
+// We also have a pre-Java-9 versions of this class in freemarker-core, and we put all versions into
+// the jar artifact via "JEP 238: Multi-Release JAR Files".
 @SuppressWarnings("Since15") // For IntelliJ inspection
 public class _Java9Impl implements _Java9 {
-
-    public static final _Java9 INSTANCE = new _Java9Impl();
-
     private static final Module ACCESSOR_MODULE = BeansWrapper.class.getModule();
 
-    private _Java9Impl() {
-        // Not meant to be instantiated
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 
     @Override

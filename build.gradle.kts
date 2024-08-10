@@ -20,7 +20,7 @@
 import java.io.FileOutputStream
 import java.nio.charset.StandardCharsets
 import java.nio.file.Files
-import java.util.Properties
+import java.util.*
 import java.util.stream.Collectors
 
 plugins {
@@ -143,6 +143,9 @@ tasks.sourcesJar.configure {
     from(files("LICENSE", "NOTICE")) {
         into("META-INF")
     }
+
+    exclude("freemarker/core/_Java9Impl.java")
+    exclude("freemarker/core/_Java16Impl.java")
 
     // Depend on the createBuildInfo task and include the generated file
     dependsOn(createBuildInfo)

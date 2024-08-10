@@ -19,7 +19,6 @@
 
 package freemarker.build
 
-import java.util.concurrent.atomic.AtomicBoolean
 import org.gradle.api.NamedDomainObjectProvider
 import org.gradle.api.Project
 import org.gradle.api.artifacts.VersionCatalogsExtension
@@ -34,17 +33,13 @@ import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.bundling.Jar
 import org.gradle.api.tasks.compile.JavaCompile
 import org.gradle.api.tasks.javadoc.Javadoc
-import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.jvm.toolchain.JavaToolchainService
-import org.gradle.kotlin.dsl.dependencies
-import org.gradle.kotlin.dsl.named
-import org.gradle.kotlin.dsl.register
-import org.gradle.kotlin.dsl.setProperty
-import org.gradle.kotlin.dsl.the
+import org.gradle.kotlin.dsl.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.gradle.testing.base.TestingExtension
+import java.util.concurrent.atomic.AtomicBoolean
 
 private const val TEST_UTILS_SOURCE_SET_NAME = "test-utils"
 
@@ -162,35 +157,6 @@ class FreemarkerModuleDef internal constructor(
         return "test${sourceSetName.replaceFirstChar { it.uppercaseChar() }}WithJar"
     }
 
-    private fun registerTestWithJar(testSuiteRef: Provider<JvmTestSuite>, testJavaVersion: JavaLanguageVersion) {
-        val tasks = context.project.tasks
-        val testWithJarTaskRef = context.project.tasks.register<Test>(testWithJarTaskName(sourceSetName)) {
-            group = LifecycleBasePlugin.VERIFICATION_GROUP
-            description = "Runs the tests in ${sourceSetName} with the jar as the dependency."
-
-            val testSourceSet = testSuiteRef.get().sources
-            testClassesDirs = testSourceSet.output.classesDirs
-
-            val jarClasspath = project.objects.fileCollection()
-            jarClasspath.from(tasks.named(JavaPlugin.JAR_TASK_NAME))
-            jarClasspath.from(testSourceSet.output)
-            jarClasspath.from(testUtils().output)
-            // Filtering out directories is strictly speaking incorrect.
-            // Our intent is to filter out the compiled classes that are declared as dependencies.
-            // The correct solution would be to split the configurations to separately
-            // track the external and internal dependencies. However, that would be a considerable
-            // complication of the build, and this solution should be good given that our external
-            // dependencies are always files (jars).
-            jarClasspath.from(testSourceSet.runtimeClasspath.filter { it.isFile })
-            classpath = jarClasspath
-
-            javaLauncher.set(context.javaToolchains.launcherFor {
-                languageVersion.set(testJavaVersion)
-            })
-        }
-        tasks.named(LifecycleBasePlugin.CHECK_TASK_NAME) { dependsOn(testWithJarTaskRef) }
-    }
-
     private fun configureTests(testJavaVersion: JavaLanguageVersion): NamedDomainObjectProvider<JvmTestSuite> {
         val testSuiteRef = getOrCreateTestSuiteRef()
         testSuiteRef.configure {
@@ -199,8 +165,6 @@ class FreemarkerModuleDef internal constructor(
             configureSources(sources, testJavaVersion)
             targets.all { configureTarget(this, sources, testJavaVersion) }
         }
-
-        registerTestWithJar(testSuiteRef, testJavaVersion)
 
         return testSuiteRef
     }
@@ -265,6 +229,21 @@ class FreemarkerModuleDef internal constructor(
                     .destinationDir
                     .toString()
                 systemProperty("freemarker.test.resourcesDir", resourcesDestDir)
+
+                // We have to build the jar and depend on that, because we depend on "JEP 238: Multi-Release JAR Files",
+                // which puts some classes into the jar under META-INF\versions\$javaVersion.
+                val jarClasspath = project.objects.fileCollection()
+                jarClasspath.from(project.tasks.named(JavaPlugin.JAR_TASK_NAME))
+                jarClasspath.from(sources.output)
+                jarClasspath.from(testUtils().output)
+                // Filtering out directories is strictly speaking incorrect.
+                // Our intent is to filter out the compiled classes that are declared as dependencies.
+                // The correct solution would be to split the configurations to separately
+                // track the external and internal dependencies. However, that would be a considerable
+                // complication of the build, and this solution should be good given that our external
+                // dependencies are always files (jars).
+                jarClasspath.from(sources.runtimeClasspath.filter { it.isFile })
+                classpath = jarClasspath
 
                 javaLauncher.set(context.javaToolchains.launcherFor {
                     languageVersion.set(testRunnerJavaVersion)

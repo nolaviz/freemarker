@@ -25,16 +25,15 @@ import java.util.Set;
 
 /**
  * Used internally only, might change without notice!
- * Used for accessing functionality that's only present in Java 16 or later.
+ * Java 16 implementation of {@link _Java16}.
  */
-// Compile this against Java 16
+// We also have a pre-Java-16 versions of this class in freemarker-core, and we put all versions into
+// the jar artifact via "JEP 238: Multi-Release JAR Files".
 @SuppressWarnings("Since15") // For IntelliJ inspection
 public class _Java16Impl implements _Java16 {
-
-    public static final _Java16 INSTANCE = new _Java16Impl();
-
-    private _Java16Impl() {
-        // Not meant to be instantiated
+    @Override
+    public boolean isSupported() {
+        return true;
     }
 
     @Override

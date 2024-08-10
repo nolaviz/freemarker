@@ -137,6 +137,11 @@ Reproducible builds: If the resulting `freemarker.jar` is not identical with the
 in the `.buildinfo` file packed into the official source distribution, and also into the Maven "sources" artifact! At
 least with identical Java versions, the resulting `freemarker.jar` meant to match exactly.
 
+Note on trying things out with an ad-hoc class that has `main` method: Don't do that, instead write it as a JUnit test.
+FreeMarker needs to be loaded from `freemarker.jar` that contains the `META-INF/versions` directory (as per JEP 238,
+Multi-Release JAR Files). If you run a test, Gradle ensures that you have an up-to-date `freemarker.jar`, and
+that it's in the classpath. Without that, FreeMarker will behave as if you are on a lower Java version.
+
 
 ### Maven-related build tasks
 
