@@ -13460,7 +13460,7 @@ grant codeBase "file:/path/to/freemarker.jar"
             <primary>blank_to_null built-in</primary>
           </indexterm>
 
-          <para>Returns null if the string is null, empty or contains only whitespaces. 
+          <para>Returns <literal>null</literal> if the string is <literal>null</literal>, empty or contains only whitespaces. 
           Otherwise it returns the string as is. (un-trimmed). Also can be applied to <literal>null</literal>/missing values like the <link
           linkend="ref_builtin_has_content">has_content</link> built-in.
           Example:</para>
@@ -13848,6 +13848,40 @@ Green Mouse</programlisting>
           implementation) returns, while <literal>?date</literal> without the
           <literal>()</literal> returns a tricky wrapper value that's a date
           and a method and hash on the same time.</para>
+        </section>
+
+        <section xml:id="ref_empty_to_null">
+          <title>empty_to_null</title>
+
+          <indexterm>
+            <primary>empty_to_null built-in</primary>
+          </indexterm>
+
+          <para>Returns <literal>null</literal> if the string is <literal>null</literal> or empty. 
+          Otherwise it returns the string as is. (un-trimmed). Also can be applied to <literal>null</literal>/missing values like the <link
+          linkend="ref_builtin_has_content">has_content</link> built-in.
+          Example:</para>
+
+          <programlisting role="template">${nonExisting?blank_to_null!"-"}
+${nonExisting!?blank_to_null!"-"}
+${""?blank_to_null!"-"}
+${"    "?blank_to_null!"-"}
+${"    a"?blank_to_null!"-"}
+${"a"?blank_to_null!"-"}
+${"a "?blank_to_null!"-"}
+</programlisting>
+
+          <para>The output:</para>
+
+          <programlisting role="output">-
+-
+-
+    
+    a
+a
+a 
+</programlisting>
+          
         </section>
 
         <section xml:id="ref_builtin_ends_with">
@@ -15139,6 +15173,41 @@ foobar</programlisting>
           <para>The output:</para>
 
           <programlisting role="output">(green mouse)</programlisting>
+        </section>
+
+        <section xml:id="ref_trim_to_null">
+          <title>trim_to_null</title>
+
+          <indexterm>
+            <primary>trim_to_null built-in</primary>
+          </indexterm>
+
+          <para>Returns <literal>null</literal> if the string is <literal>null</literal>, empty or contains only whitespaces. 
+          Otherwise it returns the string <literal>trimmed</literal> (like <link
+          linkend="ref_builtin_trim">trim</link> built-in). Also can be applied to <literal>null</literal>/missing values like the <link
+          linkend="ref_builtin_has_content">has_content</link> built-in.
+          Example:</para>
+
+          <programlisting role="template">${nonExisting?trim_to_null!"-"}
+${nonExisting!?trim_to_null!"-"}
+${""?trim_to_null!"-"}
+${"    "?trim_to_null!"-"}
+${"    a"?trim_to_null!"-"}
+${"a"?trim_to_null!"-"}
+${"a "?trim_to_null!"-"}
+</programlisting>
+
+          <para>The output:</para>
+
+          <programlisting role="output">-
+-
+-
+-
+a
+a
+a
+</programlisting>
+          
         </section>
 
         <section xml:id="ref_builtin_truncate">
