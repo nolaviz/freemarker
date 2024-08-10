@@ -13472,9 +13472,11 @@ grant codeBase "file:/path/to/freemarker.jar"
             <primary>blank_to_null built-in</primary>
           </indexterm>
 
-          <para>Returns <literal>null</literal> if the string is <literal>null</literal>, empty or contains only whitespaces. 
+          <para>Returns missing value (<literal>null</literal>) if the string is <literal>null</literal>, empty or contains only whitespaces. 
           Otherwise it returns the string as is. (un-trimmed). Also can be applied to <literal>null</literal>/missing values like the <link
           linkend="ref_builtin_has_content">has_content</link> built-in.
+          Since it can returns a missing value (<literal>null</literal>) you can handle this by using <link
+          linkend="dgui_template_exp_missing">missing value handler operators</link>.
           Example:</para>
 
           <programlisting role="template">${nonExisting?blank_to_null!"-"}
@@ -13869,9 +13871,11 @@ Green Mouse</programlisting>
             <primary>empty_to_null built-in</primary>
           </indexterm>
 
-          <para>Returns <literal>null</literal> if the string is <literal>null</literal> or empty. 
+          <para>Returns missing value (<literal>null</literal>) if the string is <literal>null</literal> or empty. 
           Otherwise it returns the string as is. (un-trimmed). Also can be applied to <literal>null</literal>/missing values like the <link
           linkend="ref_builtin_has_content">has_content</link> built-in.
+          Since it can returns a missing value (<literal>null</literal>) you can handle this by using <link
+          linkend="dgui_template_exp_missing">missing value handler operators</link>.
           Example:</para>
 
           <programlisting role="template">${nonExisting?blank_to_null!"-"}
@@ -15194,10 +15198,12 @@ foobar</programlisting>
             <primary>trim_to_null built-in</primary>
           </indexterm>
 
-          <para>Returns <literal>null</literal> if the string is <literal>null</literal>, empty or contains only whitespaces. 
+          <para>Returns missing value (<literal>null</literal>) if the string is <literal>null</literal>, empty or contains only whitespaces. 
           Otherwise it returns the string <literal>trimmed</literal> (like <link
           linkend="ref_builtin_trim">trim</link> built-in). Also can be applied to <literal>null</literal>/missing values like the <link
           linkend="ref_builtin_has_content">has_content</link> built-in.
+          Since it can returns a missing value (<literal>null</literal>) you can handle this by using <link
+          linkend="dgui_template_exp_missing">missing value handler operators</link>.
           Example:</para>
 
           <programlisting role="template">${nonExisting?trim_to_null!"-"}
