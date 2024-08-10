@@ -12852,6 +12852,10 @@ grant codeBase "file:/path/to/freemarker.jar"
           </listitem>
 
           <listitem>
+            <para><link linkend="ref_builtin_blank_to_null">blank_to_null</link></para>
+          </listitem>
+
+          <listitem>
             <para><link linkend="ref_builtin_boolean">boolean</link></para>
           </listitem>
 
@@ -12946,24 +12950,28 @@ grant codeBase "file:/path/to/freemarker.jar"
           </listitem>
 
           <listitem>
+            <para><link linkend="ref_builtin_empty_to_null">empty_to_null</link></para>
+          </listitem>
+          
+          <listitem>
+            <para><link
+              linkend="ref_builtin_ends_with">ends_with</link></para>
+            </listitem>
+            
+            <listitem>
+              <para><link
+                linkend="ref_builtin_ensure_ends_with">ensure_ends_with</link></para>
+          </listitem>
+          
+          <listitem>
+            <para><link
+              linkend="ref_builtin_ensure_starts_with">ensure_starts_with</link></para>
+            </listitem>
+            
+          <listitem>
             <para><link linkend="ref_builtin_esc">esc</link></para>
           </listitem>
-
-          <listitem>
-            <para><link
-            linkend="ref_builtin_ends_with">ends_with</link></para>
-          </listitem>
-
-          <listitem>
-            <para><link
-            linkend="ref_builtin_ensure_ends_with">ensure_ends_with</link></para>
-          </listitem>
-
-          <listitem>
-            <para><link
-            linkend="ref_builtin_ensure_starts_with">ensure_starts_with</link></para>
-          </listitem>
-
+            
           <listitem>
             <para><link linkend="ref_builtin_eval">eval</link></para>
           </listitem>
@@ -13341,6 +13349,10 @@ grant codeBase "file:/path/to/freemarker.jar"
           </listitem>
 
           <listitem>
+            <para><link linkend="ref_builtin_trim_to_null">trim_to_null</link></para>
+          </listitem>
+
+          <listitem>
             <para><link linkend="ref_builtin_truncate">truncate,
             truncate_<replaceable>...</replaceable></link></para>
           </listitem>
@@ -13453,7 +13465,7 @@ grant codeBase "file:/path/to/freemarker.jar"
           built-in.</para>
         </section>
 
-        <section xml:id="ref_blank_to_null">
+        <section xml:id="ref_builtin_blank_to_null">
           <title>blank_to_null</title>
 
           <indexterm>
@@ -13850,7 +13862,7 @@ Green Mouse</programlisting>
           and a method and hash on the same time.</para>
         </section>
 
-        <section xml:id="ref_empty_to_null">
+        <section xml:id="ref_builtin_empty_to_null">
           <title>empty_to_null</title>
 
           <indexterm>
@@ -15175,7 +15187,7 @@ foobar</programlisting>
           <programlisting role="output">(green mouse)</programlisting>
         </section>
 
-        <section xml:id="ref_trim_to_null">
+        <section xml:id="ref_builtin_trim_to_null">
           <title>trim_to_null</title>
 
           <indexterm>
