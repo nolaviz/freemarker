@@ -21,6 +21,7 @@ package freemarker.core;
 
 import java.util.List;
 
+import freemarker.template.SimpleScalar;
 import freemarker.template.TemplateBooleanModel;
 import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
@@ -121,6 +122,70 @@ class BuiltInsForExistenceHandling {
             return _eval(env) == TemplateBooleanModel.TRUE;
         }
     }
+    
+    
+	static class blank_to_nullBI extends BuiltInsForExistenceHandling.ExistenceBuiltIn {
+		@Override
+		TemplateModel _eval(Environment env) throws TemplateException {
+
+			TemplateModel model = evalMaybeNonexistentTarget(env);
+
+			if (model == null) {
+				return null;
+			}
+
+			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, this, null, env);
+			return isBlank(s) ? null : model;
+		}
+
+		private static boolean isBlank(String s) {
+
+			int len = s == null ? 0 : s.length();
+
+			if (len == 0) {
+				return true;
+			}
+
+			for (int i = 0; i < len; i++) {
+
+				if (!Character.isWhitespace(s.charAt(i))) {
+					return false;
+				}
+			}
+			return true;
+		}
+	}
+
+	static class trim_to_nullBI extends BuiltInsForExistenceHandling.ExistenceBuiltIn {
+		@Override
+		TemplateModel _eval(Environment env) throws TemplateException {
+
+			TemplateModel model = evalMaybeNonexistentTarget(env);
+
+			if (model == null) {
+				return null;
+			}
+
+			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, this, null, env);
+			String trimmed = s.trim();
+			return trimmed.length() == 0 ? null : new SimpleScalar(trimmed);
+		}
+	}
+
+	static class empty_to_nullBI extends BuiltInsForExistenceHandling.ExistenceBuiltIn {
+		@Override
+		TemplateModel _eval(Environment env) throws TemplateException {
+
+			TemplateModel model = evalMaybeNonexistentTarget(env);
+
+			if (model == null) {
+				return null;
+			}
+
+			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, this, null, env);
+			return s.length() == 0 ? null : model;
+		}
+	}
 
     static class if_existsBI extends BuiltInsForExistenceHandling.ExistenceBuiltIn {
         @Override
@@ -130,5 +195,7 @@ class BuiltInsForExistenceHandling {
             return model == null ? TemplateModel.NOTHING : model;
         }
     }
+
     
+   
 }

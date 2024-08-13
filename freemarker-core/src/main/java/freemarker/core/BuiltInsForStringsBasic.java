@@ -228,7 +228,7 @@ class BuiltInsForStringsBasic {
                     "For sequences/collections (lists and such) use \"?seq_index_of\" instead."));
         }
     }
-    
+
     static class keep_afterBI extends BuiltInForString {
         class KeepAfterMethod implements TemplateMethodModelEx {
             private String s;

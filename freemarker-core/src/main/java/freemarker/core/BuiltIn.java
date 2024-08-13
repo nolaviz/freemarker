@@ -85,7 +85,7 @@ abstract class BuiltIn extends Expression implements Cloneable {
 
     static final Set<String> CAMEL_CASE_NAMES = new TreeSet<>();
     static final Set<String> SNAKE_CASE_NAMES = new TreeSet<>();
-    static final int NUMBER_OF_BIS = 296;
+    static final int NUMBER_OF_BIS = 302;
     static final HashMap<String, BuiltIn> BUILT_INS_BY_NAME = new HashMap<>(NUMBER_OF_BIS * 3 / 2 + 1, 1f);
 
     static final String BI_NAME_SNAKE_CASE_WITH_ARGS = "with_args";
@@ -100,6 +100,7 @@ abstract class BuiltIn extends Expression implements Cloneable {
         putBI("absolute_template_name", "absoluteTemplateName", new BuiltInsForStringsMisc.absolute_template_nameBI());
         putBI("ancestors", new ancestorsBI());
         putBI("api", new BuiltInsForMultipleTypes.apiBI());
+        putBI("blank_to_null", "blankToNull", new BuiltInsForExistenceHandling.blank_to_nullBI());
         putBI("boolean", new BuiltInsForStringsMisc.booleanBI());
         putBI("byte", new byteBI());
         putBI("c", new BuiltInsForMultipleTypes.cBI());
@@ -117,6 +118,7 @@ abstract class BuiltIn extends Expression implements Cloneable {
         putBI("default", new BuiltInsForExistenceHandling.defaultBI());
         putBI("double", new doubleBI());
         putBI("drop_while", "dropWhile", new BuiltInsForSequences.drop_whileBI());
+        putBI("empty_to_null", "emptyToNull", new BuiltInsForExistenceHandling.empty_to_nullBI());
         putBI("ends_with", "endsWith", new BuiltInsForStringsBasic.ends_withBI());
         putBI("ensure_ends_with", "ensureEndsWith", new BuiltInsForStringsBasic.ensure_ends_withBI());
         putBI("ensure_starts_with", "ensureStartsWith", new BuiltInsForStringsBasic.ensure_starts_withBI());
@@ -293,6 +295,7 @@ abstract class BuiltIn extends Expression implements Cloneable {
         putBI("time", new BuiltInsForMultipleTypes.dateBI(TemplateDateModel.TIME));
         putBI("time_if_unknown", "timeIfUnknown", new BuiltInsForDates.dateType_if_unknownBI(TemplateDateModel.TIME));
         putBI("trim", new BuiltInsForStringsBasic.trimBI());
+        putBI("trim_to_null", "trimToNull", new BuiltInsForExistenceHandling.trim_to_nullBI());
         putBI("truncate", new BuiltInsForStringsBasic.truncateBI());
         putBI("truncate_w", "truncateW", new BuiltInsForStringsBasic.truncate_wBI());
         putBI("truncate_c", "truncateC", new BuiltInsForStringsBasic.truncate_cBI());
