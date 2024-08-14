@@ -27,6 +27,7 @@ import freemarker.template.TemplateException;
 import freemarker.template.TemplateMethodModelEx;
 import freemarker.template.TemplateModel;
 import freemarker.template.TemplateModelException;
+import freemarker.template.utility.StringUtil;
 
 /**
  * A holder for builtins that deal with null left-hand values.
@@ -127,28 +128,28 @@ class BuiltInsForExistenceHandling {
 	static class blank_to_nullBI extends BuiltInsForExistenceHandling.ExistenceBuiltIn {
 		@Override
 		TemplateModel _eval(Environment env) throws TemplateException {
-
 			TemplateModel model = evalMaybeNonexistentTarget(env);
 
 			if (model == null) {
 				return null;
 			}
 
-			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, this, null, env);
+			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, target, null, env);
 			return isBlank(s) ? null : model;
 		}
 
 		private static boolean isBlank(String s) {
+            if (s == null) {
+                return false;
+            }
 
-			int len = s == null ? 0 : s.length();
-
+			int len = s.length();
 			if (len == 0) {
 				return true;
 			}
 
 			for (int i = 0; i < len; i++) {
-
-				if (!Character.isWhitespace(s.charAt(i))) {
+				if (!StringUtil.isWhitespaceOrNonBreakingWhitespace(s.charAt(i))) {
 					return false;
 				}
 			}
@@ -159,31 +160,29 @@ class BuiltInsForExistenceHandling {
 	static class trim_to_nullBI extends BuiltInsForExistenceHandling.ExistenceBuiltIn {
 		@Override
 		TemplateModel _eval(Environment env) throws TemplateException {
-
 			TemplateModel model = evalMaybeNonexistentTarget(env);
 
 			if (model == null) {
 				return null;
 			}
 
-			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, this, null, env);
+			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, target, null, env);
 			String trimmed = s.trim();
-			return trimmed.length() == 0 ? null : new SimpleScalar(trimmed);
+			return trimmed.isEmpty() ? null : new SimpleScalar(trimmed);
 		}
 	}
 
 	static class empty_to_nullBI extends BuiltInsForExistenceHandling.ExistenceBuiltIn {
 		@Override
 		TemplateModel _eval(Environment env) throws TemplateException {
-
 			TemplateModel model = evalMaybeNonexistentTarget(env);
 
 			if (model == null) {
 				return null;
 			}
 
-			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, this, null, env);
-			return s.length() == 0 ? null : model;
+			String s = EvalUtil.coerceModelToStringOrUnsupportedMarkup(model, target, null, env);
+			return s.isEmpty() ? null : model;
 		}
 	}
 
@@ -196,6 +195,4 @@ class BuiltInsForExistenceHandling {
         }
     }
 
-    
-   
 }

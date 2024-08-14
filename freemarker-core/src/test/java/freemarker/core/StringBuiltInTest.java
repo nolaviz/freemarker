@@ -27,49 +27,102 @@ import freemarker.template.Configuration;
 import freemarker.template.TemplateException;
 import freemarker.test.TemplateTest;
 
+/**
+ * Note that there are much more string built-in tests in {@code string-builtins1.ftl} and such, as part of the
+ * {@code TemplateTestSuite}, but now we prefer doing new tests like this.
+ */
 public class StringBuiltInTest extends TemplateTest {
-
 
     @Override
     protected Configuration createConfiguration() throws Exception {
         Configuration cfg = super.createConfiguration();
         cfg.setOutputFormat(HTMLOutputFormat.INSTANCE);
+        cfg.setNumberFormat(",##0.###");
         return cfg;
     }
 
-
     @Test
     public void testBlankToNull() throws IOException, TemplateException {
-    	assertOutput("${nonExisting?blank_to_null!\"-\"}", "-");
-    	assertOutput("${nonExisting!?blank_to_null!\"-\"}", "-");
-        assertOutput("${\"\"?blank_to_null!\"-\"}", "-");
-        assertOutput("${\"    \"?blank_to_null!\"-\"}", "-");
-        assertOutput("${\"    a\"?blank_to_null!\"-\"}", "    a");
-        assertOutput("${\"a\"?blank_to_null!\"-\"}", "a");
-        assertOutput("${\"a \"?blank_to_null!\"-\"}", "a ");
+    	assertOutput("${nonExisting?blank_to_null!'-'}", "-");
+    	assertOutput("${nonExisting!?blank_to_null!'-'}", "-");
+        assertOutput("${''?blank_to_null!'-'}", "-");
+        assertOutput("${' '?blank_to_null!'-'}", "-");
+        assertOutput("${'  a  '?blank_to_null!'-'}", "  a  ");
+        assertOutput("${'a '?blank_to_null!'-'}", "a ");
+        assertOutput("${' a'?blank_to_null!'-'}", " a");
+        assertOutput("${'a'?blank_to_null!'-'}", "a");
+        assertOutput("${'a b'?blank_to_null!'-'}", "a b");
+
+        assertOutput("${(nonExisting + '.')?blank_to_null!'-'}", "-");
+
+        assertOutput("${1234?blank_to_null!'-'}", "1,234");
+
+        // No consistent with ?trim (and String.trim()), as all UNICODE whitespace count as whitespace:
+        assertOutput("${' \u2003  '?blank_to_null!'-'}", "-");
+        assertOutput("${' \u00A0  '?blank_to_null!'-'}", "-"); // Even if it's non-breaking whitespace
     }
-    
-    
+
+    @Test
+    public void blankToNullTypeError() {
+        assertErrorContains("${[]?blank_to_null!'-'}",
+                "For \"?blank_to_null\" left-hand operand: Expected a string", "sequence");
+        assertErrorContains("<#assign html></#assign>${html?blank_to_null!'-'}",
+                "For \"?blank_to_null\" left-hand operand: Expected a string", "TemplateHTMLOutputModel");
+    }
+
     @Test
     public void testTrimToNull() throws IOException, TemplateException {
-    	assertOutput("${nonExisting?trim_to_null!\"-\"}", "-");
-    	assertOutput("${nonExisting!?trim_to_null!\"-\"}", "-");
-        assertOutput("${\"\"?trim_to_null!\"-\"}", "-");
-        assertOutput("${\"    \"?trim_to_null!\"-\"}", "-");
-        assertOutput("${\"    a\"?trim_to_null!\"-\"}", "a");
-        assertOutput("${\"a\"?trim_to_null!\"-\"}", "a");
-        assertOutput("${\"a \"?trim_to_null!\"-\"}", "a");
+    	assertOutput("${nonExisting?trim_to_null!'-'}", "-");
+    	assertOutput("${nonExisting!?trim_to_null!'-'}", "-");
+        assertOutput("${''?trim_to_null!'-'}", "-");
+        assertOutput("${' '?trim_to_null!'-'}", "-");
+        assertOutput("${'    '?trim_to_null!'-'}", "-");
+        assertOutput("${'  a  '?trim_to_null!'-'}", "a");
+        assertOutput("${'a '?trim_to_null!'-'}", "a");
+        assertOutput("${' a'?trim_to_null!'-'}", "a");
+        assertOutput("${'a'?trim_to_null!'-'}", "a");
+        assertOutput("${'a b'?trim_to_null!'-'}", "a b");
+
+        assertOutput("${(nonExisting + '.')?trim_to_null!'-'}", "-");
+
+        assertOutput("${1234?trim_to_null!'-'}", "1,234");
+
+        // To be consistent with ?trim (and String.trim()), only char <= 32 is whitespace, not all UNICODE whitespace:
+        assertOutput("${'  \u2003  '?trim_to_null!'-'}", "\u2003");
     }
-    
+
+    @Test
+    public void trimToNullTypeError() {
+        assertErrorContains("${[]?trim_to_null!'-'}",
+                "For \"?trim_to_null\" left-hand operand: Expected a string", "sequence");
+        assertErrorContains("<#assign html></#assign>${html?trim_to_null!'-'}",
+                "For \"?trim_to_null\" left-hand operand: Expected a string", "TemplateHTMLOutputModel");
+    }
+
     @Test
     public void emptyToNull() throws IOException, TemplateException {
-    	assertOutput("${nonExisting?empty_to_null!\"-\"}", "-");
-    	assertOutput("${nonExisting!?empty_to_null!\"-\"}", "-");
-        assertOutput("${\"\"?empty_to_null!\"-\"}", "-");
-        assertOutput("${\"    \"?empty_to_null!\"-\"}", "    ");
-        assertOutput("${\"    a\"?empty_to_null!\"-\"}", "    a");
-        assertOutput("${\"a\"?empty_to_null!\"-\"}", "a");
-        assertOutput("${\"a \"?empty_to_null!\"-\"}", "a ");
+    	assertOutput("${nonExisting?empty_to_null!'-'}", "-");
+    	assertOutput("${nonExisting!?empty_to_null!'-'}", "-");
+        assertOutput("${''?empty_to_null!'-'}", "-");
+        assertOutput("${' '?empty_to_null!'-'}", " ");
+        assertOutput("${'    '?empty_to_null!'-'}", "    ");
+        assertOutput("${'  a  '?empty_to_null!'-'}", "  a  ");
+        assertOutput("${'a '?empty_to_null!'-'}", "a ");
+        assertOutput("${' a'?empty_to_null!'-'}", " a");
+        assertOutput("${'a'?empty_to_null!'-'}", "a");
+        assertOutput("${'a b'?empty_to_null!'-'}", "a b");
+
+        assertOutput("${(nonExisting + '.')?empty_to_null!'-'}", "-");
+
+        assertOutput("${1234?empty_to_null!'-'}", "1,234");
     }
-   
+
+    @Test
+    public void emptyToNullTypeError() {
+        assertErrorContains("${[]?empty_to_null!'-'}",
+                "For \"?empty_to_null\" left-hand operand: Expected a string", "sequence");
+        assertErrorContains("<#assign html></#assign>${html?empty_to_null!'-'}",
+                "For \"?empty_to_null\" left-hand operand: Expected a string", "TemplateHTMLOutputModel");
+    }
+
 }

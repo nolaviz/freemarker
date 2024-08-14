@@ -12852,7 +12852,8 @@ grant codeBase "file:/path/to/freemarker.jar"
           </listitem>
 
           <listitem>
-            <para><link linkend="ref_builtin_blank_to_null">blank_to_null</link></para>
+            <para><link
+            linkend="ref_builtin_blank_to_null">blank_to_null</link></para>
           </listitem>
 
           <listitem>
@@ -12950,28 +12951,29 @@ grant codeBase "file:/path/to/freemarker.jar"
           </listitem>
 
           <listitem>
-            <para><link linkend="ref_builtin_empty_to_null">empty_to_null</link></para>
+            <para><link
+            linkend="ref_builtin_empty_to_null">empty_to_null</link></para>
           </listitem>
-          
+
           <listitem>
             <para><link
-              linkend="ref_builtin_ends_with">ends_with</link></para>
-            </listitem>
-            
-            <listitem>
-              <para><link
-                linkend="ref_builtin_ensure_ends_with">ensure_ends_with</link></para>
+            linkend="ref_builtin_ends_with">ends_with</link></para>
           </listitem>
-          
+
           <listitem>
             <para><link
-              linkend="ref_builtin_ensure_starts_with">ensure_starts_with</link></para>
-            </listitem>
-            
+            linkend="ref_builtin_ensure_ends_with">ensure_ends_with</link></para>
+          </listitem>
+
+          <listitem>
+            <para><link
+            linkend="ref_builtin_ensure_starts_with">ensure_starts_with</link></para>
+          </listitem>
+
           <listitem>
             <para><link linkend="ref_builtin_esc">esc</link></para>
           </listitem>
-            
+
           <listitem>
             <para><link linkend="ref_builtin_eval">eval</link></para>
           </listitem>
@@ -13349,7 +13351,8 @@ grant codeBase "file:/path/to/freemarker.jar"
           </listitem>
 
           <listitem>
-            <para><link linkend="ref_builtin_trim_to_null">trim_to_null</link></para>
+            <para><link
+            linkend="ref_builtin_trim_to_null">trim_to_null</link></para>
           </listitem>
 
           <listitem>
@@ -13472,33 +13475,73 @@ grant codeBase "file:/path/to/freemarker.jar"
             <primary>blank_to_null built-in</primary>
           </indexterm>
 
-          <para>Returns missing value (<literal>null</literal>) if the string is <literal>null</literal>, empty or contains only whitespaces. 
-          Otherwise it returns the string as is. (un-trimmed). Also can be applied to <literal>null</literal>/missing values like the <link
-          linkend="ref_builtin_has_content">has_content</link> built-in.
-          Since it can returns a missing value (<literal>null</literal>) you can handle this by using <link
-          linkend="dgui_template_exp_missing">missing value handler operators</link>.
-          Example:</para>
+          <indexterm>
+            <primary>undefined variable</primary>
+          </indexterm>
+
+          <indexterm>
+            <primary>missing variable</primary>
+          </indexterm>
+
+          <indexterm>
+            <primary>null</primary>
+          </indexterm>
+
+          <para>Returns missing value (Java <literal>null</literal>) if the
+          value is a string with 0 length, or contains only whitespace
+          characters, or the value is missing (<literal>null</literal>, or an
+          undefined variable). Otherwise it returns the string as is (without
+          trimming). As it reduces blank strings to a missing value (Java
+          <literal>null</literal>), this let's you uniformly handle blanks the
+          same as missing values, with the <link
+          linkend="dgui_template_exp_missing">missing value handler
+          operators</link>. For example, if somewhere you have
+          <literal>${user.fullName!'Not specified'}</literal>, but then you
+          realize that sometimes <literal>user.fullName</literal> is a blank
+          string (which is not a missing value, hence the default value is not
+          applied), you can fix that as
+          <literal>${user.fullName?blank_to_null!'Not
+          specified'}</literal>.</para>
+
+          <para>Example:</para>
 
           <programlisting role="template">${nonExisting?blank_to_null!"-"}
-${nonExisting!?blank_to_null!"-"}
 ${""?blank_to_null!"-"}
 ${"    "?blank_to_null!"-"}
-${"    a"?blank_to_null!"-"}
+
 ${"a"?blank_to_null!"-"}
-${"a "?blank_to_null!"-"}
-</programlisting>
+${"  a  "?blank_to_null!"-"}.</programlisting>
 
           <para>The output:</para>
 
           <programlisting role="output">-
 -
 -
--
-    a
+
 a
-a 
-</programlisting>
-          
+  a  .</programlisting>
+
+          <para>Note that this built-in considers everything that's whitespace
+          according to UNICODE as a blank character, including the various
+          non-breaking whitespace variants (like <literal>"\xA0"</literal>,
+          NBSP). This is in contrast with <link
+          linkend="ref_builtin_trim"><literal>trim</literal></link> and
+          <literal><link
+          linkend="ref_builtin_trim_to_null"><literal>trim_to_null</literal></link></literal>,
+          which only considers ASCII whitespace as removable.</para>
+
+          <para>Note that this built-in behaves with parentheses on its left
+          side as the <link linkend="dgui_template_exp_missing">missing value
+          handler operators</link>, that is,
+          <literal>(missingValue.subvariable)?blank_or_null</literal> will
+          handle <literal>missingValue</literal>, while
+          <literal>missingValue.subvariable?blank_or_null</literal> will fail
+          at the <literal>.</literal> (dot) operator.</para>
+
+          <para>See also: <link
+          linkend="ref_builtin_empty_to_null"><literal>empty_to_null</literal>,
+          <literal><link
+          linkend="ref_builtin_trim_to_null"><literal>trim_to_null</literal></link></literal></link></para>
         </section>
 
         <section xml:id="ref_builtin_cap_first">
@@ -13871,33 +13914,63 @@ Green Mouse</programlisting>
             <primary>empty_to_null built-in</primary>
           </indexterm>
 
-          <para>Returns missing value (<literal>null</literal>) if the string is <literal>null</literal> or empty. 
-          Otherwise it returns the string as is. (un-trimmed). Also can be applied to <literal>null</literal>/missing values like the <link
-          linkend="ref_builtin_has_content">has_content</link> built-in.
-          Since it can returns a missing value (<literal>null</literal>) you can handle this by using <link
-          linkend="dgui_template_exp_missing">missing value handler operators</link>.
-          Example:</para>
+          <indexterm>
+            <primary>undefined variable</primary>
+          </indexterm>
 
-          <programlisting role="template">${nonExisting?blank_to_null!"-"}
-${nonExisting!?blank_to_null!"-"}
-${""?blank_to_null!"-"}
-${"    "?blank_to_null!"-"}
-${"    a"?blank_to_null!"-"}
-${"a"?blank_to_null!"-"}
-${"a "?blank_to_null!"-"}
-</programlisting>
+          <indexterm>
+            <primary>missing variable</primary>
+          </indexterm>
+
+          <indexterm>
+            <primary>null</primary>
+          </indexterm>
+
+          <para>Returns missing value (Java <literal>null</literal>) if the
+          value is a string with 0 length, or the value is missing
+          (<literal>null</literal>, or an undefined variable). Otherwise it
+          returns the string as is (without trimming). As it reduces empty
+          strings to a missing value (Java <literal>null</literal>), this
+          let's you uniformly handle empty strings the same as missing values,
+          with the <link linkend="dgui_template_exp_missing">missing value
+          handler operators</link>. For example, if somewhere you have
+          <literal>${user.fullName!'Not specified'}</literal>, but then you
+          realize that sometimes <literal>user.fullName</literal> is an
+          0-length string (which is not a missing value, hence the default
+          value is not applied), you can fix that as
+          <literal>${user.fullName?empty_to_null!'Not
+          specified'}</literal>.</para>
+
+          <para>Example:</para>
+
+          <programlisting role="template">${nonExisting?empty_to_null!"-"}
+${""?empty_to_null!"-"}
+
+${"    "?empty_to_null!"-"}.
+${"a"?empty_to_null!"-"}
+${"  a  "?empty_to_null!"-"}.</programlisting>
 
           <para>The output:</para>
 
           <programlisting role="output">-
 -
--
-    
-    a
+
+    .
 a
-a 
-</programlisting>
-          
+  a  .</programlisting>
+
+          <para>Note that this built-in behaves with parentheses on its left
+          side as the <link linkend="dgui_template_exp_missing">missing value
+          handler operators</link>, that is,
+          <literal>(missingValue.subvariable)?empty_to_null</literal> will
+          handle <literal>missingValue</literal>, while
+          <literal>missingValue.subvariable?empty_to_null</literal> will fail
+          at the <literal>.</literal> (dot) operator.</para>
+
+          <para>See also: <link
+          linkend="ref_builtin_blank_to_null"><literal>blank_to_null</literal></link>,
+          <literal><link
+          linkend="ref_builtin_trim_to_null"><literal>trim_to_null</literal></link></literal></para>
         </section>
 
         <section xml:id="ref_builtin_ends_with">
@@ -15198,34 +15271,69 @@ foobar</programlisting>
             <primary>trim_to_null built-in</primary>
           </indexterm>
 
-          <para>Returns missing value (<literal>null</literal>) if the string is <literal>null</literal>, empty or contains only whitespaces. 
-          Otherwise it returns the string <literal>trimmed</literal> (like <link
-          linkend="ref_builtin_trim">trim</link> built-in). Also can be applied to <literal>null</literal>/missing values like the <link
-          linkend="ref_builtin_has_content">has_content</link> built-in.
-          Since it can returns a missing value (<literal>null</literal>) you can handle this by using <link
-          linkend="dgui_template_exp_missing">missing value handler operators</link>.
-          Example:</para>
+          <indexterm>
+            <primary>undefined variable</primary>
+          </indexterm>
+
+          <indexterm>
+            <primary>missing variable</primary>
+          </indexterm>
+
+          <indexterm>
+            <primary>null</primary>
+          </indexterm>
+
+          <para>Similar to the <link
+          linkend="ref_builtin_trim"><literal>trim</literal> built-in</link>,
+          but when the result is an empty string, it instead returns a missing
+          value (Java <literal>null</literal>). Also, if the value to trim is
+          missing (Java <literal>null</literal>, or an undefined variable), it
+          returns a missing value (Java <literal>null</literal>) instead of
+          failing (while the <link
+          linkend="ref_builtin_trim"><literal>trim</literal> built-in</link>
+          will fail then). As it reduces blank strings to a missing value
+          (Java <literal>null</literal>), this let's you uniformly handle
+          blanks the same as missing values, with the <link
+          linkend="dgui_template_exp_missing">missing value handler
+          operators</link>. For example, if somewhere you have
+          <literal>${user.fullName!'Not specified'}</literal>, but then you
+          realize that sometimes <literal>user.fullName</literal> is a blank
+          string (which is not a missing value, hence the default value is not
+          applied), and you also want to get rid of leading and trailing
+          whitespace in non-blank values, then you can do that in one move as
+          <literal>${user.fullName?trim_to_null!'Not
+          specified'}</literal>.</para>
+
+          <para>Example:</para>
 
           <programlisting role="template">${nonExisting?trim_to_null!"-"}
-${nonExisting!?trim_to_null!"-"}
 ${""?trim_to_null!"-"}
 ${"    "?trim_to_null!"-"}
-${"    a"?trim_to_null!"-"}
+
 ${"a"?trim_to_null!"-"}
-${"a "?trim_to_null!"-"}
-</programlisting>
+${"  a  "?trim_to_null!"-"}.</programlisting>
 
           <para>The output:</para>
 
           <programlisting role="output">-
 -
 -
--
+
 a
-a
-a
-</programlisting>
-          
+a.</programlisting>
+
+          <para>Note that this built-in behaves with parentheses on its left
+          side as the <link linkend="dgui_template_exp_missing">missing value
+          handler operators</link>, that is,
+          <literal>(missingValue.subvariable)?trim_to_null</literal> will
+          handle <literal>missingValue</literal>, while
+          <literal>missingValue.subvariable?trim_to_null</literal> will fail
+          at the <literal>.</literal> (dot) operator.</para>
+
+          <para>See also: <link
+          linkend="ref_builtin_blank_to_null"><literal>blank_to_null</literal></link>,
+          <link
+          linkend="ref_builtin_blank_to_null"><literal>empty_to_null</literal></link>.</para>
         </section>
 
         <section xml:id="ref_builtin_truncate">
@@ -30241,6 +30349,23 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
           <title>Changes on the FTL side</title>
 
           <itemizedlist>
+            <listitem>
+              <para>Added new built-ins that allow handling empty or blank
+              strings like the same way as if they were missing values (Java
+              <literal>null</literal>-s): <link
+              linkend="ref_builtin_blank_to_null"><literal><replaceable>stringOrMissing?</replaceable>blank_to_null</literal></link>,
+              <link
+              linkend="ref_builtin_blank_to_null"><literal><replaceable>stringOrMissing?</replaceable>empty_to_null</literal></link>,
+              <link
+              linkend="ref_builtin_trim_to_null"><literal><replaceable>stringOrMissing?</replaceable>trim_to_null</literal></link>.
+              For example, if somewhere you had <literal>${user.fullName!'Not
+              specified'}</literal>, but then you realize that sometimes
+              <literal>user.fullName</literal> is a blank string (and hence
+              the default value is not applied), you can write
+              <literal>${user.fullName?blank_to_null!'Not
+              specified'}</literal>.</para>
+            </listitem>
+
             <listitem>
               <para><link
               xlink:href="https://issues.apache.org/jira/browse/FREEMARKER-227">FREEMARKER-227</link>:

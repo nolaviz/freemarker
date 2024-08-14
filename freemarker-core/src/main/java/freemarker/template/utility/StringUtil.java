@@ -862,8 +862,10 @@ public class StringUtil {
      * @param s maybe {@code null}.
      */
     public static String emptyToNull(String s) {
-    	if (s == null) return null;
-    	return s.length() == 0 ? null : s;
+    	if (s == null) {
+            return null;
+        }
+    	return s.isEmpty() ? null : s;
     }
     
     /**
@@ -2080,6 +2082,13 @@ public class StringUtil {
             }
         }
         return true;
+    }
+
+    public static boolean isWhitespaceOrNonBreakingWhitespace(char c) {
+        if (Character.isWhitespace(c)) {
+            return true;
+        }
+        return c == '\u00A0' || c == '\u202F' || c == '\u2007' || c == '\u2060';
     }
 
     /**
