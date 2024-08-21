@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.regex.Pattern;
 
 import freemarker.template.utility.ClassUtil;
 import freemarker.template.utility.NullArgumentException;
@@ -92,6 +93,7 @@ public abstract class MemberSelectorListMemberAccessPolicy implements MemberAcce
         private final Method method;
         private final Constructor<?> constructor;
         private final Field field;
+        private static final Pattern patternCleanStr = Pattern.compile("\\s*([\\.,\\(\\)\\[\\]])\\s*");
 
         /**
          * Use if you want to match methods similar to the specified one, in types that are {@code instanceof} of
@@ -193,8 +195,7 @@ public abstract class MemberSelectorListMemberAccessPolicy implements MemberAcce
                         "Malformed whitelist entry (shouldn't contain \"<\", \">\", \"...\", or \";\"): "
                                 + memberSelectorString);
             }
-            String cleanedStr = memberSelectorString.trim().replaceAll("\\s*([\\.,\\(\\)\\[\\]])\\s*", "$1");
-
+            String cleanedStr = patternCleanStr.matcher(memberSelectorString.trim()).replaceAll("$1");
             int postMemberNameIdx;
             boolean hasArgList;
             {
