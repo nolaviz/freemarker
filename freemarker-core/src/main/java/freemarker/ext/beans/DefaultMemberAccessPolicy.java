@@ -26,6 +26,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -162,7 +163,7 @@ public final class DefaultMemberAccessPolicy implements MemberAccessPolicy {
         try (BufferedReader reader = new BufferedReader(
                 new InputStreamReader(
                         DefaultMemberAccessPolicy.class.getResourceAsStream("DefaultMemberAccessPolicy-rules"),
-                        "UTF-8"))) {
+                        StandardCharsets.UTF_8))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 whitelist.add(line);

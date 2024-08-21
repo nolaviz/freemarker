@@ -23,6 +23,7 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 
 import org.junit.Test;
@@ -71,7 +72,7 @@ public class TemplateConfigurationWithTemplateCacheTest {
         {
             Template t = cfg.getTemplate("default.ftl", "iso-8859-5");
             assertEquals("iso-8859-5", t.getEncoding());
-            assertEquals(new String(TEXT_WITH_ACCENTS.getBytes("iso-8859-1"), "iso-8859-5"),
+            assertEquals(new String(TEXT_WITH_ACCENTS.getBytes(StandardCharsets.ISO_8859_1), "iso-8859-5"),
                     getTemplateOutput(t));
         }
         {
@@ -100,11 +101,11 @@ public class TemplateConfigurationWithTemplateCacheTest {
                         + "<#include 'utf16.ftl' encoding='iso-8859-5'>"
                         + "<#include 'default.ftl' encoding='iso-8859-5'>"
                         + "<#include 'utf8-latin2.ftl' encoding='iso-8859-5'>"
-                ).getBytes("iso-8859-1"));
+                ).getBytes(StandardCharsets.ISO_8859_1));
         assertEquals(
                 TEXT_WITH_ACCENTS + TEXT_WITH_ACCENTS + TEXT_WITH_ACCENTS + TEXT_WITH_ACCENTS
                 + TEXT_WITH_ACCENTS + TEXT_WITH_ACCENTS
-                + new String(TEXT_WITH_ACCENTS.getBytes("iso-8859-1"), "iso-8859-5")
+                + new String(TEXT_WITH_ACCENTS.getBytes(StandardCharsets.ISO_8859_1), "iso-8859-5")
                 + TEXT_WITH_ACCENTS,
                 getTemplateOutput(cfg.getTemplate("main.ftl")));
     }
@@ -301,8 +302,8 @@ public class TemplateConfigurationWithTemplateCacheTest {
         cfg.setLocale(Locale.US);
         
         ByteArrayTemplateLoader tl = new ByteArrayTemplateLoader();
-        tl.putTemplate("utf8.ftl", TEXT_WITH_ACCENTS.getBytes("utf-8"));
-        tl.putTemplate("utf16.ftl", TEXT_WITH_ACCENTS.getBytes("utf-16"));
+        tl.putTemplate("utf8.ftl", TEXT_WITH_ACCENTS.getBytes(StandardCharsets.UTF_8));
+        tl.putTemplate("utf16.ftl", TEXT_WITH_ACCENTS.getBytes(StandardCharsets.UTF_16));
         tl.putTemplate("default.ftl", TEXT_WITH_ACCENTS.getBytes("iso-8859-2"));
         tl.putTemplate("utf8-latin2.ftl",
                 ("<#ftl encoding='iso-8859-2'>" + TEXT_WITH_ACCENTS).getBytes("iso-8859-2"));
