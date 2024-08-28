@@ -29,6 +29,7 @@ import freemarker.template.TemplateException;
 final class SwitchBlock extends TemplateElement {
 
     private Case defaultCase;
+    private boolean usesOnDirective;
     private final Expression searched;
     private int firstCaseOrOnIndex;
 
@@ -46,9 +47,6 @@ final class SwitchBlock extends TemplateElement {
         firstCaseOrOnIndex = ignoredCnt; // Note that normally postParseCleanup will overwrite this
     }
 
-    /**
-     * @param cas a Case element.
-     */
     void addCase(Case cas) {
         if (cas.condition == null) {
             defaultCase = cas;
@@ -56,40 +54,40 @@ final class SwitchBlock extends TemplateElement {
         addChild(cas);
     }
 
-    /**
-     * @param on an On element.
-     */
     void addOn(On on) {
         addChild(on);
+        usesOnDirective = true;
     }
 
     @Override
-    TemplateElement[] accept(Environment env)
-        throws TemplateException, IOException {
-        boolean processedCaseOrOn = false;
-        boolean usingOn = false;
+    TemplateElement[] accept(Environment env) throws TemplateException, IOException {
         int ln = getChildCount();
-        try {
-            for (int i = firstCaseOrOnIndex; i < ln; i++) {
+        if (usesOnDirective) {
+            processOnDirectives: for (int i = firstCaseOrOnIndex; i < ln; i++) {
                 TemplateElement tel = getChild(i);
 
-                if (tel instanceof On) {
-                    usingOn = true;
+                // "default" is always the last; the parser ensures this
+                if (tel == defaultCase) {
+                    env.visit(defaultCase);
+                    break;
+                }
 
-                    for (Expression condition : ((On) tel).conditions) {
-                        boolean processOn = EvalUtil.compare(
-                                searched,
-                                EvalUtil.CMP_OP_EQUALS, "on==", condition, condition, env);
-                        if (processOn) {
-                            env.visit(tel);
-                            processedCaseOrOn = true;
-                            break;
-                        }
+                for (Expression condition : ((On) tel).conditions) {
+                    boolean processOn = EvalUtil.compare(
+                            searched,
+                            EvalUtil.CMP_OP_EQUALS, "on==", condition, condition, env);
+                    if (processOn) {
+                        env.visit(tel);
+                        break processOnDirectives;
                     }
-                    if (processedCaseOrOn) {
-                        break;
-                    }
-                } else { // Case
+                }
+            }
+        } else { // case-s
+            try {
+                boolean processedCaseOrOn = false;
+                for (int i = firstCaseOrOnIndex; i < ln; i++) {
+                    TemplateElement tel = getChild(i);
+
                     Expression condition = ((Case) tel).condition;
                     boolean processCase = false;
 
@@ -107,19 +105,14 @@ final class SwitchBlock extends TemplateElement {
                         processedCaseOrOn = true;
                     }
                 }
-            }
-
-            // If we didn't process any nestedElements, and we have a default,
-            // process it.
-            if (!processedCaseOrOn && defaultCase != null) {
-                env.visit(defaultCase);
-            }
-        } catch (BreakOrContinueException br) {
-            // This catches both break and continue,
-            // hence continue is incorrectly treated as a break inside a case.
-            // Unless using On, do backwards compatible behavior.
-            if (usingOn) {
-                throw br; // On supports neither break nor continue.
+                // If we didn't process any nestedElements, and we have a default,
+                // process it.
+                if (!processedCaseOrOn && defaultCase != null) {
+                    env.visit(defaultCase);
+                }
+            } catch (BreakOrContinueException br) {
+                // This catches both break and continue, hence continue is incorrectly treated as a break inside a case.
+                // ("on", doesn't have this bug.)
             }
         }
         return null;

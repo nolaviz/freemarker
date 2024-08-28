@@ -21200,6 +21200,10 @@ with_args_last:
           </listitem>
 
           <listitem>
+            <para><link linkend="ref.directive.on">on</link></para>
+          </listitem>
+
+          <listitem>
             <para><link
             linkend="ref_directive_outputformat">outputformat</link></para>
           </listitem>
@@ -25181,11 +25185,13 @@ or
       </section>
 
       <section xml:id="ref_directive_switch">
-        <title>switch, case, default, break</title>
+        <title>switch, on, case, default, break</title>
 
         <anchor xml:id="ref.directive.switch"/>
 
         <anchor xml:id="ref.directive.case"/>
+
+        <anchor xml:id="ref.directive.on"/>
 
         <anchor xml:id="ref.directive.default"/>
 
@@ -25200,6 +25206,10 @@ or
         </indexterm>
 
         <indexterm>
+          <primary>on directive</primary>
+        </indexterm>
+
+        <indexterm>
           <primary>default directive</primary>
         </indexterm>
 
@@ -25210,13 +25220,32 @@ or
         <section>
           <title>Synopsis</title>
 
-          <programlisting role="metaTemplate">
-<literal>&lt;#switch <replaceable>value</replaceable>&gt;
-  &lt;#case <replaceable>refValue1</replaceable>&gt;
+          <para>Recommended form (<literal>on</literal>-based), but this is
+          <emphasis role="bold">only supported since FreeMarker
+          2.3.34</emphasis>:</para>
+
+          <programlisting role="metaTemplate"><literal>&lt;#switch <replaceable>value</replaceable>&gt;
+  &lt;#on <replaceable>refValue1</replaceable>&gt;
+    <replaceable>... (Handles refValue1)</replaceable>
+  &lt;#on <replaceable>refValue2, refValue3</replaceable>&gt;
+    <replaceable>... (Handles both refValue2 and refValue3)</replaceable>)
+  <replaceable>...</replaceable>
+  &lt;#case <replaceable>refValueN</replaceable>&gt;
     <replaceable>...</replaceable>
     &lt;#break&gt;
-  &lt;#case <replaceable>refValue2</replaceable>&gt;
+  &lt;#default&gt;
     <replaceable>...</replaceable>
+&lt;/#switch&gt;</literal></programlisting>
+
+          <para>Deprecated legacy form (<literal>case</literal>-based):</para>
+
+          <programlisting role="metaTemplate"><literal>&lt;#switch <replaceable>value</replaceable>&gt;
+  &lt;#case <replaceable>refValue1</replaceable>&gt;
+    <replaceable>... (Handles refValue1)</replaceable>
+    &lt;#break&gt;
+  &lt;#case <replaceable>refValue2</replaceable>&gt;
+  &lt;#case <replaceable>refValue3</replaceable>&gt;
+    <replaceable>... (Handles both refValue2 and refValue3)</replaceable>
     &lt;#break&gt;
   <replaceable>...</replaceable>
   &lt;#case <replaceable>refValueN</replaceable>&gt;
@@ -25224,9 +25253,7 @@ or
     &lt;#break&gt;
   &lt;#default&gt;
     <replaceable>...</replaceable>
-&lt;/#switch&gt;
-</literal>
-</programlisting>
+&lt;/#switch&gt;</literal></programlisting>
 
           <para>Where:</para>
 
@@ -25238,54 +25265,140 @@ or
             </listitem>
           </itemizedlist>
 
-          <para>The <literal>break</literal>-s and <literal>default</literal>
-          are optional.</para>
+          <para>Additional rules:</para>
+
+          <itemizedlist>
+            <listitem>
+              <para>A <literal>switch</literal> block either have
+              <literal>on</literal>-s, or <literal>case</literal>-s, but not
+              both.</para>
+            </listitem>
+
+            <listitem>
+              <para><literal>default</literal>: Optional, can occur at most
+              once. Must be after the <literal>on</literal>-s. There's no
+              ordering restriction when used with
+              <literal>case</literal>-s.</para>
+            </listitem>
+
+            <listitem>
+              <para><literal>break</literal>: </para>
+
+              <itemizedlist>
+                <listitem>
+                  <para>If the <literal>switch</literal> uses
+                  <literal>case</literal> then <literal>break</literal>
+                  immediately exits from the closes enclosing
+                  <literal>switch</literal>. This is used to prevent
+                  fall-through into the next <literal>case</literal>, or into
+                  the following (adjacent) <literal>default</literal>. (To be
+                  precise, <literal>break</literal> behaves as described if
+                  the <literal>switch</literal> doesn't contain
+                  <literal>on</literal>, and thus also if all it contains is a
+                  <literal>default</literal>.)</para>
+                </listitem>
+
+                <listitem>
+                  <para>If the <literal>switch</literal> uses
+                  <literal>on</literal> then <literal>break</literal> is not
+                  supported by <literal>switch</literal> directly, but
+                  naturally can be used when the <literal>switch</literal> is
+                  inside something else that supports <literal>break</literal>
+                  (like inside a <link
+                  linkend="ref.directive.list">list</link>).</para>
+                </listitem>
+
+                <listitem>
+                  <para>With <literal>case</literal>,
+                  <literal>continue</literal> does the same as
+                  <literal>break</literal>. This is an old bug that works for
+                  backward compatibility, but don't utilize it. With
+                  <literal>on</literal>, this is fixed.</para>
+                </listitem>
+              </itemizedlist>
+            </listitem>
+          </itemizedlist>
         </section>
 
         <section>
           <title>Description</title>
 
-          <para>The usage of this directive is not recommended, as it's
-          error-prone because of the fall-through behavior. Use <link
-          linkend="ref.directive.elseif"><literal>elseif</literal></link>-s
-          instead unless you want to exploit the fall-through behavior.</para>
+          <note>
+            <para>Using this directive with <literal>case</literal> is not
+            recommended, as it's error-prone because of the fall-through
+            behavior. Starting from FreeMarker 2.3.34, use
+            <literal>on</literal> instead of <literal>case</literal>. In
+            earlier versions use <link
+            linkend="ref.directive.elseif"><literal>elseif</literal></link>-s
+            instead. </para>
+          </note>
 
           <para>Switch is used to choose a fragment of template depending on
-          the value of an expression:</para>
+          the value of an expression, and is a shorthand instead using <link
+          linkend="ref.directive.if"><literal>if</literal>-<literal>elseif</literal>-<literal>else</literal></link>:</para>
+
+          <programlisting role="template">&lt;#switch animal.size&gt;
+  &lt;#on "small"&gt;
+     Processed if animal.size was "small" 
+  &lt;#on "medium"&gt;
+     Processed if animal.size was "medium" 
+  &lt;#on "large", "extra large"&gt;
+     Processed if animal.size was "large" or "extra large"
+  &lt;#default&gt;
+     Processed if animal.size is neither of the above
+&lt;/#switch&gt;</programlisting>
+
+          <para>Before FreeMarker 2.3.24, <literal>on</literal> wasn't
+          supported, only <literal>case</literal> (note the usage of
+          <literal>break</literal>, and the intentional omission of it after
+          <literal>&lt;#case "large"&gt;</literal>):</para>
 
           <programlisting role="template">&lt;#switch animal.size&gt;
   &lt;#case "small"&gt;
-     This will be processed if it is small
+     Processed if animal.size was "small" 
      &lt;#break&gt;
   &lt;#case "medium"&gt;
-     This will be processed if it is medium
+     Processed if animal.size was "medium" 
      &lt;#break&gt;
   &lt;#case "large"&gt;
-     This will be processed if it is large
+  &lt;#case "extra large"&gt;
+     Processed if animal.size was "large" or "extra large"
      &lt;#break&gt;
   &lt;#default&gt;
-     This will be processed if it is neither
+     Processed if animal.size is neither of the above
 &lt;/#switch&gt;</programlisting>
 
-          <para>Inside the <literal>switch</literal> must be one or more
-          <literal>&lt;#case <replaceable>value</replaceable>&gt;</literal>,
-          and after all such <literal>case</literal> tags optionally one
-          <literal>&lt;#default&gt;</literal>. When FM reaches the
-          <literal>switch</literal> directive, it chooses a
-          <literal>case</literal> directive where
+          <para>Above examples are basically equivalent with this:</para>
+
+          <programlisting role="template">&lt;#assign value = animal.size&gt;
+&lt;#if value == "small"&gt;
+   Processed if animal.size was "small" 
+&lt;#elseif value == "medium"&gt;
+   Processed if animal.size was "medium" 
+&lt;#elseif value == "large" || value == "extra large"&gt;
+   Processed if animal.size was "large" or "extra large"
+&lt;#else&gt;
+   Processed if animal.size is neither of the above
+&lt;/#if&gt;</programlisting>
+
+          <para>That is, when the <literal>switch</literal> directive is
+          processed, it chooses an <literal>on</literal> or
+          <literal>case</literal> directive where a
           <literal><replaceable>refValue</replaceable></literal> equals with
-          <literal><replaceable>value</replaceable></literal> and continues
+          <literal><replaceable>value</replaceable></literal>, and continues
           the processing of the template there. If there is no
-          <literal>case</literal> directive with appropriate value then it
-          continues processing at the <literal>default</literal> directive if
-          that exists, otherwise it continues the processing after the end-tag
-          of <literal>switch</literal>. And now comes the confusing thing:
-          when it has chosen a <literal>case</literal> directive, it will
-          continue the processing there, and will go ahead until it reaches a
-          <literal>break</literal> directive. That is, it will not
-          automatically leave the <literal>switch</literal> directive when it
-          reaches another <literal>case</literal> directive or the
-          <literal>&lt;#default&gt;</literal> tag. Example:</para>
+          <literal>on</literal> or <literal>case</literal> directive with
+          appropriate <literal><replaceable>refValue</replaceable></literal>,
+          then it continues processing at the <literal>default</literal>
+          directive, if that exists, otherwise it continues the processing
+          after the end-tag of <literal>switch</literal>.</para>
+
+          <para>Be careful with <literal>case</literal>'s fall-through
+          behavior! It means that after processing have jumped on the matching
+          <literal>case</literal>, it will not leave the
+          <literal>switch</literal> directive when it reaches another
+          <literal>case</literal> or <literal>default</literal>, only when it
+          reaches a <literal>break</literal>. Example:</para>
 
           <programlisting role="template">&lt;#switch x&gt;
   &lt;#case 1&gt;
@@ -25296,12 +25409,14 @@ or
     d
 &lt;/#switch&gt;</programlisting>
 
-          <para>If <literal>x</literal> is 1, then it will print 1 2 d; if
-          <literal>x</literal> is 2 then it will print 2 d; if
-          <literal>x</literal> is 3 then it will print d. This is the
-          mentioned fall-through behavior. The <literal>break</literal> tag
-          instructs FM to immediately skip past the <literal>switch</literal>
-          end-tag.</para>
+          <para>If <literal>x</literal> is <literal>1</literal>, then it will
+          print <literal>1 2 d</literal> (actually with more white-space
+          between); if <literal>x</literal> is <literal>2</literal> then it
+          will print <literal>2 d</literal>; if <literal>x</literal> is
+          <literal>3</literal> then it will print <literal>d</literal>. This
+          is usually unintended, or if it is intended then probably not
+          obvious for the reader, and that's why <literal>on</literal> is
+          recommended over <literal>case</literal>.</para>
         </section>
       </section>
 
@@ -30349,6 +30464,19 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
           <title>Changes on the FTL side</title>
 
           <itemizedlist>
+            <listitem>
+              <para>Added <literal>#on</literal> directive that's now
+              recommended instead of <literal>#case</literal> inside
+              <literal>#switch</literal>. It has no fall-through, so you need
+              not, and must not use <literal>#break</literal> like you did
+              with <literal>#case</literal>. Also, <literal>#on</literal> can
+              have a list of matching values, so you can use <literal>&lt;#on
+              1, 2, 3&gt;Was 1-3</literal> instead of <literal>&lt;#case
+              1&gt;&lt;#case 2&gt;&lt;#case 3&gt;Was
+              1-3&lt;#break&gt;</literal> See more <link
+              linkend="ref.directive.switch">here...</link></para>
+            </listitem>
+
             <listitem>
               <para>Added new built-ins that allow handling empty or blank
               strings like the same way as if they were missing values (Java

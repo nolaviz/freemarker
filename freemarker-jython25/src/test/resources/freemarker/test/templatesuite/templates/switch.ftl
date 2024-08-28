@@ -136,7 +136,7 @@
 </#list>
 
 <#-- two #default-s are parsing error -->
-<@assertFails message="can only have one default"><@"<#switch 1><#case 1><#default><#default></#switch>"?interpret /></@>
+<@assertFails message="already had a #default"><@"<#switch 1><#case 1><#default><#default></#switch>"?interpret /></@>
 
 </body>
 </html>
