@@ -6657,7 +6657,7 @@ That's all.</programlisting>
         beginning of the application (possibly servlet) life-cycle:</para>
 
         <programlisting role="unspecified">// Create your Configuration instance, and specify if up to what FreeMarker
-// version (here 2.3.32) do you want to apply the fixes that are not 100%
+// version (here 2.3.34) do you want to apply the fixes that are not 100%
 // backward-compatible. See the Configuration JavaDoc for details.
 Configuration cfg = new Configuration(Configuration.VERSION_2_3_34);
 
