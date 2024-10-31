@@ -25282,7 +25282,7 @@ or
             </listitem>
 
             <listitem>
-              <para><literal>break</literal>: </para>
+              <para><literal>break</literal>:</para>
 
               <itemizedlist>
                 <listitem>
@@ -25330,7 +25330,7 @@ or
             <literal>on</literal> instead of <literal>case</literal>. In
             earlier versions use <link
             linkend="ref.directive.elseif"><literal>elseif</literal></link>-s
-            instead. </para>
+            instead.</para>
           </note>
 
           <para>Switch is used to choose a fragment of template depending on
@@ -30479,7 +30479,7 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
 
             <listitem>
               <para>Added new built-ins that allow handling empty or blank
-              strings like the same way as if they were missing values (Java
+              strings the same way as if they were missing values (Java
               <literal>null</literal>-s): <link
               linkend="ref_builtin_blank_to_null"><literal><replaceable>stringOrMissing?</replaceable>blank_to_null</literal></link>,
               <link
@@ -30489,7 +30489,7 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
               For example, if somewhere you had <literal>${user.fullName!'Not
               specified'}</literal>, but then you realize that sometimes
               <literal>user.fullName</literal> is a blank string (and hence
-              the default value is not applied), you can write
+              the default value is not used), you can write
               <literal>${user.fullName?blank_to_null!'Not
               specified'}</literal>.</para>
             </listitem>
