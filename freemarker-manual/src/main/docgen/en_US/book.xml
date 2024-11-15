@@ -20741,7 +20741,7 @@ Again:
 
           <programlisting role="template">&lt;@m?with_args(dynArgs) /&gt;</programlisting>
 
-          <programlisting role="output">a=1, b=1, c=1</programlisting>
+          <programlisting role="output">a=1, b=2, c=3</programlisting>
 
           <para>Below call also does the same, but combines dynamic arguments
           from <literal>dynArgsAB</literal>, assumed to be <literal>{'a': 1,
@@ -20750,7 +20750,7 @@ Again:
 
           <programlisting role="template">&lt;@m?with_args(dynArgsAB) c=3 /&gt;</programlisting>
 
-          <programlisting role="output">a=1, b=1, c=1</programlisting>
+          <programlisting role="output">a=1, b=2, c=3</programlisting>
 
           <para>To understand why this works, you need to realize that macros,
           custom directives, functions, and methods in FreeMarker are just
