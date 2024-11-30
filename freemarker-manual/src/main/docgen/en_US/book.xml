@@ -30465,7 +30465,9 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
 
           <itemizedlist>
             <listitem>
-              <para>Added <literal>#on</literal> directive that's now
+              <para><link
+              xlink:href="https://github.com/apache/freemarker/pull/114">GitHub
+              PR-114:</link> Added <literal>#on</literal> directive that's now
               recommended instead of <literal>#case</literal> inside
               <literal>#switch</literal>. It has no fall-through, so you need
               not, and must not use <literal>#break</literal> like you did
@@ -30478,8 +30480,10 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
             </listitem>
 
             <listitem>
-              <para>Added new built-ins that allow handling empty or blank
-              strings the same way as if they were missing values (Java
+              <para><link
+              xlink:href="https://github.com/apache/freemarker/pull/111">GitHub
+              PR-111:</link> Added new built-ins that allow handling empty or
+              blank strings the same way as if they were missing values (Java
               <literal>null</literal>-s): <link
               linkend="ref_builtin_blank_to_null"><literal><replaceable>stringOrMissing?</replaceable>blank_to_null</literal></link>,
               <link
@@ -30495,7 +30499,9 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
             </listitem>
 
             <listitem>
-              <para>Fixed bug: Both <literal>[#sep]</literal> and
+              <para><link
+              xlink:href="https://github.com/apache/freemarker/pull/119">GitHub
+              PR-119</link>: Fixed bug: Both <literal>[#sep]</literal> and
               <literal>&lt;#sep&gt;</literal> were interpreted as a call to
               the <literal>sep</literal> directive, regardless if the already
               established tag syntax was angle bracket or square bracket tags.
@@ -30524,8 +30530,10 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
 
           <itemizedlist>
             <listitem>
-              <para>Using multi-release JAR format (JEP 238) to put Java 9 and
-              Java 16 support files
+              <para><link
+              xlink:href="https://github.com/apache/freemarker/pull/110">GitHub
+              PR-110</link>: Using multi-release JAR format (JEP 238) to put
+              Java 9 and Java 16 support files
               (<literal>freemarker.core._Java9Impl</literal> and
               <literal>_Java16Impl</literal>) into
               <literal>freemarker.jar</literal>. This means that they are now
