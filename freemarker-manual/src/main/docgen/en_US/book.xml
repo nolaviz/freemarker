@@ -30495,6 +30495,16 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
             </listitem>
 
             <listitem>
+              <para>Fixed bug: Both <literal>[#sep]</literal> and
+              <literal>&lt;#sep&gt;</literal> were interpreted as a call to
+              the <literal>sep</literal> directive, regardless if the already
+              established tag syntax was angle bracket or square bracket tags.
+              For now on, the tag will be seen as just static text, if the
+              opposite tag syntax was already established, just as it's done
+              for all other FTL tags.</para>
+            </listitem>
+
+            <listitem>
               <para><link
               xlink:href="https://issues.apache.org/jira/browse/FREEMARKER-227">FREEMARKER-227</link>:
               Fixed bug, where if <literal>classic_compatible</literal> mode
