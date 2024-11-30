@@ -3916,11 +3916,9 @@ SwitchBlock Switch() :
                     hadDefault = true;
                 } else {
                     if (hadOn) {
-                        if (caseOrDefault.condition != null) {
-                            throw new ParseException(
-                                    "You can't use both #on, and #case in a #switch block, and you already had an #on.",
-                                    caseOrDefault);
-                        }
+                        throw new ParseException(
+                                "You can't use both #on, and #case in a #switch block, and you already had an #on.",
+                                caseOrDefault);
                     }
                     hadCase = true;
                 }
