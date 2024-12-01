@@ -10434,14 +10434,14 @@ cfg.setNumberFormat("@ua 0.####;; roundingMode=halfUp");</programlisting>
               <literal>freemarker.template.Configuration</literal> object
               like:</para>
 
-              <programlisting role="unspecified">... = new Configuration(Configuration.VERSION_2_3_28)</programlisting>
+              <programlisting role="unspecified">... = new Configuration(Configuration.VERSION_2_3_34)</programlisting>
             </listitem>
 
             <listitem>
               <para>Or, alter the <literal>Configuration</literal> singleton
               where you initialize its other settings like:</para>
 
-              <programlisting role="unspecified">cfg.setIncompatibleImprovements(Configuration.VERSION_2_3_28)</programlisting>
+              <programlisting role="unspecified">cfg.setIncompatibleImprovements(Configuration.VERSION_2_3_34)</programlisting>
             </listitem>
 
             <listitem>
@@ -10449,7 +10449,7 @@ cfg.setNumberFormat("@ua 0.####;; roundingMode=halfUp");</programlisting>
               (<literal>*.properties</literal> file or
               <literal>java.util.Properties</literal> object), add:</para>
 
-              <programlisting role="unspecified">incompatible_improvements=2.3.28</programlisting>
+              <programlisting role="unspecified">incompatible_improvements=2.3.34</programlisting>
             </listitem>
 
             <listitem>
@@ -10460,7 +10460,7 @@ cfg.setNumberFormat("@ua 0.####;; roundingMode=halfUp");</programlisting>
 
               <programlisting role="unspecified">&lt;init-param&gt;
     &lt;param-name&gt;incompatible_improvements&lt;/param-name&gt;
-    &lt;param-value&gt;2.3.28&lt;/param-value&gt;
+    &lt;param-value&gt;2.3.34&lt;/param-value&gt;
 &lt;/init-param&gt;</programlisting>
             </listitem>
           </itemizedlist>
@@ -10497,7 +10497,7 @@ cfg.setNumberFormat("@ua 0.####;; roundingMode=halfUp");</programlisting>
             <para>Do not ever use
             <literal>Configuration.getVersion()</literal> to set the
             <quote>incompatible improvements</quote> setting. Always use a
-            fixed value, like <literal>Configuration.VERSION_2_3_28</literal>.
+            fixed value, like <literal>Configuration.VERSION_2_3_34</literal>.
             Otherwise your application can break as you upgrade FreeMarker.
             The whole point of <quote>incompatible improvements</quote> is to
             protect you from that, while you still always get the
@@ -30458,7 +30458,7 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
       <section xml:id="versions_2_3_34">
         <title>2.3.34</title>
 
-        <para>Release date: TODO</para>
+        <para>Release date: 2024-12-01 + release process</para>
 
         <section>
           <title>Changes on the FTL side</title>
@@ -31556,8 +31556,8 @@ TemplateModel x = env.getVariable("x");  // get variable x</programlisting>
               This applies to said setting of
               <literal>Configuration</literal>,
               <literal>DefaultObjectWrapper</literal>, and
-              <literal>BeansWrapper</literal>. The typical bad pattern is
-              this: <literal>new
+              <literal>BeansWrapper</literal>. The typical
+              <emphasis>bad</emphasis> pattern is this: <literal>new
               Configuration(Configuration.getVersion())</literal>. Doing that
               defeats the purpose of
               <literal>incompatibleImprovements</literal>, and makes upgrading
