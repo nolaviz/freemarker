@@ -31,6 +31,7 @@ public class SepParsingBugTest extends TemplateTest {
     
     @Test
     public void testAutodetectTagSyntax() throws TemplateException, IOException {
+        getConfiguration().setIncompatibleImprovements(Configuration.VERSION_2_3_24);
         getConfiguration().setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
         assertOutput("<#list [1, 2] as i>${i}<#sep>, </#list>", "1, 2");
         assertOutput("[#list [1, 2] as i]${i}[#sep], [/#list]", "1, 2");
@@ -42,6 +43,7 @@ public class SepParsingBugTest extends TemplateTest {
 
     @Test
     public void testAngleBracketsTagSyntax() throws TemplateException, IOException {
+        getConfiguration().setIncompatibleImprovements(Configuration.VERSION_2_3_24);
         getConfiguration().setTagSyntax(Configuration.ANGLE_BRACKET_TAG_SYNTAX);
         assertOutput("<#list [1, 2] as i>${i}<#sep>, </#list>", "1, 2");
         assertOutput("[#list [1, 2] as i]${i!'-'}[#sep], [/#list]", "[#list [1, 2] as i]-[#sep], [/#list]");
@@ -53,6 +55,7 @@ public class SepParsingBugTest extends TemplateTest {
 
     @Test
     public void testSquareBracketTagSyntax() throws TemplateException, IOException {
+        getConfiguration().setIncompatibleImprovements(Configuration.VERSION_2_3_24);
         getConfiguration().setTagSyntax(Configuration.SQUARE_BRACKET_TAG_SYNTAX);
         assertOutput("<#list [1, 2] as i>${i!'-'}<#sep>, </#list>", "<#list [1, 2] as i>-<#sep>, </#list>");
         assertOutput("[#list [1, 2] as i]${i}[#sep], [/#list]", "1, 2");
@@ -62,4 +65,10 @@ public class SepParsingBugTest extends TemplateTest {
         assertErrorContains("[#sep]", "#sep must be inside");
     }
 
+    @Test
+    public void testLegacyTagSyntax() throws TemplateException, IOException {
+        getConfiguration().setIncompatibleImprovements(Configuration.VERSION_2_3_23);
+        getConfiguration().setTagSyntax(Configuration.AUTO_DETECT_TAG_SYNTAX);
+        assertOutput("<#list [1, 2] as i>${i}<sep>, </#list>", "1, 2");
+    }
 }
